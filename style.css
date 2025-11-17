@@ -119,6 +119,8 @@ body {
     border: 2px solid var(--border);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
     transition: transform 0.3s ease;
+    margin-top: 50px; /* Verschiebt Cover nach unten, damit es auf Trailer-Höhe ist */
+    align-self: flex-start;
 }
 
 .anime-cover:hover {
