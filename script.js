@@ -61,32 +61,25 @@ const animeData = [
 // ============================================
 
 let currentIndex = 0;
+let ratings = {}; // Bewertungen nur im Arbeitsspeicher (werden nach Reload zurückgesetzt)
 
 // ============================================
-// LOCAL STORAGE FUNCTIONS
+// RATING FUNCTIONS (nur im Arbeitsspeicher)
 // ============================================
 
 function getRatings() {
-    const ratings = localStorage.getItem('animeRatings');
-    return ratings ? JSON.parse(ratings) : {};
-}
-
-function saveRatings(ratings) {
-    localStorage.setItem('animeRatings', JSON.stringify(ratings));
+    return ratings;
 }
 
 function getAnimeRating(animeId) {
-    const ratings = getRatings();
     return ratings[animeId] || null;
 }
 
 function setAnimeRating(animeId, rating) {
-    const ratings = getRatings();
     ratings[animeId] = {
         value: rating,
         text: getRatingText(rating)
     };
-    saveRatings(ratings);
 }
 
 function getRatingText(rating) {
