@@ -182,6 +182,23 @@ body {
     margin: 0;
 }
 
+.trailer-hint {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-top: 8px;
+    text-align: center;
+    font-style: italic;
+    opacity: 0.8;
+}
+
+.trailer-error {
+    color: var(--danger);
+    padding: 20px;
+    text-align: center;
+    margin: 0;
+    font-size: 0.9rem;
+}
+
 /* Rating Section */
 .rating-section-large {
     padding: 20px 24px;
