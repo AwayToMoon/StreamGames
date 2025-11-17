@@ -185,10 +185,12 @@ async function loadTrailerForAnime(anime) {
                 </iframe>
             `;
         } else {
-            loadingDiv.remove();
+            loadingDiv.innerHTML = '<p class="trailer-error">⚠️ Trailer nicht verfügbar. Bitte auf YouTube schauen.</p>';
+            loadingDiv.classList.remove('with-iframe');
         }
     } else {
-        loadingDiv.remove();
+        loadingDiv.innerHTML = '<p class="trailer-error">⚠️ Trailer nicht verfügbar. Bitte auf YouTube schauen.</p>';
+        loadingDiv.classList.remove('with-iframe');
     }
 }
 
@@ -222,6 +224,7 @@ function createAnimeCard(anime) {
                     </iframe>
                 </div>
                 ` : ''}
+                <p class="trailer-hint">⚠️ Falls der Trailer nicht funktioniert, bitte auf YouTube schauen</p>
             </div>
         </div>
         <div class="rating-section-large">
