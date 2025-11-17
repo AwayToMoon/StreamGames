@@ -238,7 +238,7 @@ function createAnimeCard(anime) {
                     <span class="star-large" data-rating="5">☆</span>
                 </div>
                 <p class="rating-text-large" id="rating-display-${anime.id}-higherCellF">
-                    ${ratingHigherCellF ? `${ratingHigherCellF}/5` : 'Wähle deine Bewertung'}
+                    ${ratingHigherCellF ? `${ratingHigherCellF}/5` : ''}
                 </p>
             </div>
             <div class="rating-group">
@@ -251,7 +251,7 @@ function createAnimeCard(anime) {
                     <span class="star-large" data-rating="5">☆</span>
                 </div>
                 <p class="rating-text-large" id="rating-display-${anime.id}-ogAle">
-                    ${ratingOGAle ? `${ratingOGAle}/5` : 'Wähle deine Bewertung'}
+                    ${ratingOGAle ? `${ratingOGAle}/5` : ''}
                 </p>
             </div>
             ${isAnimeFullyRated(anime.id) ? `
@@ -412,3 +412,4 @@ document.addEventListener('DOMContentLoaded', () => {
     renderCurrentAnime();
     document.getElementById('load-more-btn').addEventListener('click', loadNextAnime);
 });
+
