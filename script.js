@@ -62,6 +62,7 @@ const animeData = [
 
 let currentIndex = 0;
 let ratings = {}; // Bewertungen nur im Arbeitsspeicher (werden nach Reload zurückgesetzt)
+// Struktur: ratings[animeId] = { higherCellF: rating, ogAle: rating }
 
 // ============================================
 // RATING FUNCTIONS (nur im Arbeitsspeicher)
@@ -71,15 +72,21 @@ function getRatings() {
     return ratings;
 }
 
-function getAnimeRating(animeId) {
-    return ratings[animeId] || null;
+function getAnimeRating(animeId, reviewer) {
+    if (!ratings[animeId]) return null;
+    return ratings[animeId][reviewer] || null;
 }
 
-function setAnimeRating(animeId, rating) {
-    ratings[animeId] = {
-        value: rating,
-        text: getRatingText(rating)
-    };
+function setAnimeRating(animeId, reviewer, rating) {
+    if (!ratings[animeId]) {
+        ratings[animeId] = {};
+    }
+    ratings[animeId][reviewer] = rating;
+}
+
+function isAnimeFullyRated(animeId) {
+    if (!ratings[animeId]) return false;
+    return ratings[animeId].higherCellF && ratings[animeId].ogAle;
 }
 
 function getRatingText(rating) {
@@ -190,7 +197,8 @@ async function loadTrailerForAnime(anime) {
 // ============================================
 
 function createAnimeCard(anime) {
-    const rating = getAnimeRating(anime.id);
+    const ratingHigherCellF = getAnimeRating(anime.id, 'higherCellF');
+    const ratingOGAle = getAnimeRating(anime.id, 'ogAle');
     
     const card = document.createElement('div');
     card.className = 'anime-card';
@@ -217,20 +225,35 @@ function createAnimeCard(anime) {
             </div>
         </div>
         <div class="rating-section-large">
-            <h3 class="rating-title">Bewerte diesen Anime:</h3>
-            <div class="stars-rating-large">
-                <span class="star-large" data-rating="1">☆</span>
-                <span class="star-large" data-rating="2">☆</span>
-                <span class="star-large" data-rating="3">☆</span>
-                <span class="star-large" data-rating="4">☆</span>
-                <span class="star-large" data-rating="5">☆</span>
+            <div class="rating-group">
+                <h3 class="rating-title">HigherCellF:</h3>
+                <div class="stars-rating-large" data-reviewer="higherCellF">
+                    <span class="star-large" data-rating="1">☆</span>
+                    <span class="star-large" data-rating="2">☆</span>
+                    <span class="star-large" data-rating="3">☆</span>
+                    <span class="star-large" data-rating="4">☆</span>
+                    <span class="star-large" data-rating="5">☆</span>
+                </div>
+                <p class="rating-text-large" id="rating-display-${anime.id}-higherCellF">
+                    ${ratingHigherCellF ? `${ratingHigherCellF}/5` : 'Wähle deine Bewertung'}
+                </p>
             </div>
-            <p class="rating-text-large" id="rating-display-${anime.id}">
-                ${rating ? `${rating.value}/5 - ${rating.text}` : 'Wähle deine Bewertung'}
-            </p>
-            ${rating ? `
+            <div class="rating-group">
+                <h3 class="rating-title">OGAle_:</h3>
+                <div class="stars-rating-large" data-reviewer="ogAle">
+                    <span class="star-large" data-rating="1">☆</span>
+                    <span class="star-large" data-rating="2">☆</span>
+                    <span class="star-large" data-rating="3">☆</span>
+                    <span class="star-large" data-rating="4">☆</span>
+                    <span class="star-large" data-rating="5">☆</span>
+                </div>
+                <p class="rating-text-large" id="rating-display-${anime.id}-ogAle">
+                    ${ratingOGAle ? `${ratingOGAle}/5` : 'Wähle deine Bewertung'}
+                </p>
+            </div>
+            ${isAnimeFullyRated(anime.id) ? `
                 <div class="rating-saved-message">
-                    ✓ Bewertung gespeichert! Du kannst jetzt weiter klicken.
+                    ✓ Beide Bewertungen gespeichert! Du kannst jetzt weiter klicken.
                 </div>
             ` : ''}
         </div>
@@ -275,60 +298,68 @@ function attachStarEvents() {
     const card = document.querySelector('.anime-card');
     if (!card) return;
     
-    const stars = card.querySelectorAll('.star-large');
     const animeId = parseInt(card.dataset.animeId);
-    const existingRating = getAnimeRating(animeId);
+    const ratingGroups = card.querySelectorAll('.stars-rating-large');
     
-    // Set existing rating
-    if (existingRating) {
-        stars.forEach((star, index) => {
-            star.classList.toggle('active', index + 1 <= existingRating.value);
-        });
-    }
-    
-    // Attach events
-    stars.forEach(star => {
-        const rating = parseInt(star.dataset.rating);
+    ratingGroups.forEach(group => {
+        const reviewer = group.dataset.reviewer;
+        const stars = group.querySelectorAll('.star-large');
+        const existingRating = getAnimeRating(animeId, reviewer);
         
-        star.addEventListener('mouseenter', () => {
-            stars.forEach((s, i) => {
-                s.classList.toggle('active', i < rating);
+        // Set existing rating
+        if (existingRating) {
+            stars.forEach((star, index) => {
+                star.classList.toggle('active', index + 1 <= existingRating);
             });
-        });
+        }
         
-        star.addEventListener('mouseleave', () => {
-            if (existingRating) {
+        // Attach events
+        stars.forEach(star => {
+            const rating = parseInt(star.dataset.rating);
+            
+            star.addEventListener('mouseenter', () => {
                 stars.forEach((s, i) => {
-                    s.classList.toggle('active', i < existingRating.value);
+                    s.classList.toggle('active', i < rating);
                 });
-            } else {
-                stars.forEach(s => s.classList.remove('active'));
-            }
-        });
-        
-        star.addEventListener('click', () => {
-            setAnimeRating(animeId, rating);
-            
-            // Update display
-            stars.forEach((s, i) => {
-                s.classList.toggle('active', i < rating);
             });
             
-            const ratingDisplay = document.getElementById(`rating-display-${animeId}`);
-            if (ratingDisplay) {
-                ratingDisplay.textContent = `${rating}/5 - ${getRatingText(rating)}`;
-            }
+            star.addEventListener('mouseleave', () => {
+                if (existingRating) {
+                    stars.forEach((s, i) => {
+                        s.classList.toggle('active', i < existingRating);
+                    });
+                } else {
+                    stars.forEach(s => s.classList.remove('active'));
+                }
+            });
             
-            // Show saved message
-            const ratingSection = card.querySelector('.rating-section-large');
-            if (ratingSection && !ratingSection.querySelector('.rating-saved-message')) {
-                const savedMsg = document.createElement('div');
-                savedMsg.className = 'rating-saved-message';
-                savedMsg.textContent = '✓ Bewertung gespeichert! Du kannst jetzt weiter klicken.';
-                ratingSection.appendChild(savedMsg);
-            }
-            
-            updateLoadMoreButton();
+            star.addEventListener('click', () => {
+                setAnimeRating(animeId, reviewer, rating);
+                
+                // Update display
+                stars.forEach((s, i) => {
+                    s.classList.toggle('active', i < rating);
+                });
+                
+                const ratingDisplay = document.getElementById(`rating-display-${animeId}-${reviewer}`);
+                if (ratingDisplay) {
+                    ratingDisplay.textContent = `${rating}/5`;
+                }
+                
+                // Show saved message if both rated
+                if (isAnimeFullyRated(animeId)) {
+                    const ratingSection = card.querySelector('.rating-section-large');
+                    let savedMsg = ratingSection.querySelector('.rating-saved-message');
+                    if (!savedMsg) {
+                        savedMsg = document.createElement('div');
+                        savedMsg.className = 'rating-saved-message';
+                        ratingSection.appendChild(savedMsg);
+                    }
+                    savedMsg.textContent = '✓ Beide Bewertungen gespeichert! Du kannst jetzt weiter klicken.';
+                }
+                
+                updateLoadMoreButton();
+            });
         });
     });
 }
@@ -343,24 +374,24 @@ function updateLoadMoreButton() {
     }
     
     const currentAnime = animeData[currentIndex];
-    const rating = getAnimeRating(currentAnime.id);
+    const fullyRated = isAnimeFullyRated(currentAnime.id);
     
-    if (rating) {
+    if (fullyRated) {
         btn.disabled = false;
         btn.querySelector('span').textContent = 'Weiter';
     } else {
         btn.disabled = true;
-        btn.querySelector('span').textContent = 'Bitte erst bewerten';
+        btn.querySelector('span').textContent = 'Bitte beide Bewertungen abgeben';
     }
 }
 
 async function loadNextAnime() {
     if (currentIndex < animeData.length) {
         const currentAnime = animeData[currentIndex];
-        const rating = getAnimeRating(currentAnime.id);
+        const fullyRated = isAnimeFullyRated(currentAnime.id);
         
-        if (!rating) {
-            alert('Bitte bewerte zuerst diesen Anime, bevor du weitermachst!');
+        if (!fullyRated) {
+            alert('Bitte gib beide Bewertungen (HigherCellF und OGAle_) ab, bevor du weitermachst!');
             return;
         }
     }
