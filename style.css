@@ -114,7 +114,6 @@ body {
     flex-shrink: 0;
     width: 240px;
     height: 395px;
-    object-fit: cover;
     border-radius: 12px;
     border: 2px solid var(--border);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
@@ -391,4 +390,5 @@ body {
         font-size: 2rem;
     }
 }
+
 
