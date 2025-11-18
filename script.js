@@ -238,7 +238,7 @@ function createAnimeCard(anime) {
                     <span class="star-large" data-rating="5">☆</span>
                 </div>
                 <p class="rating-text-large" id="rating-display-${anime.id}-higherCellF">
-                    ${ratingHigherCellF ? `${ratingHigherCellF}/5` : ''}
+                    ${ratingHigherCellF ? `${ratingHigherCellF}/5` : 'Wähle deine Bewertung'}
                 </p>
             </div>
             <div class="rating-group">
@@ -251,7 +251,7 @@ function createAnimeCard(anime) {
                     <span class="star-large" data-rating="5">☆</span>
                 </div>
                 <p class="rating-text-large" id="rating-display-${anime.id}-ogAle">
-                    ${ratingOGAle ? `${ratingOGAle}/5` : ''}
+                    ${ratingOGAle ? `${ratingOGAle}/5` : 'Wähle deine Bewertung'}
                 </p>
             </div>
             ${isAnimeFullyRated(anime.id) ? `
@@ -307,9 +307,12 @@ function attachStarEvents() {
     ratingGroups.forEach(group => {
         const reviewer = group.dataset.reviewer;
         const stars = group.querySelectorAll('.star-large');
-        const existingRating = getAnimeRating(animeId, reviewer);
         
-        // Set existing rating
+        // Helper function to get current rating dynamically
+        const getCurrentRating = () => getAnimeRating(animeId, reviewer);
+        
+        // Set existing rating on load
+        const existingRating = getCurrentRating();
         if (existingRating) {
             stars.forEach((star, index) => {
                 star.classList.toggle('active', index + 1 <= existingRating);
@@ -327,9 +330,10 @@ function attachStarEvents() {
             });
             
             star.addEventListener('mouseleave', () => {
-                if (existingRating) {
+                const currentRating = getCurrentRating();
+                if (currentRating) {
                     stars.forEach((s, i) => {
-                        s.classList.toggle('active', i < existingRating);
+                        s.classList.toggle('active', i < currentRating);
                     });
                 } else {
                     stars.forEach(s => s.classList.remove('active'));
@@ -339,7 +343,7 @@ function attachStarEvents() {
             star.addEventListener('click', () => {
                 setAnimeRating(animeId, reviewer, rating);
                 
-                // Update display
+                // Update display - set all stars up to rating as active
                 stars.forEach((s, i) => {
                     s.classList.toggle('active', i < rating);
                 });
@@ -412,4 +416,3 @@ document.addEventListener('DOMContentLoaded', () => {
     renderCurrentAnime();
     document.getElementById('load-more-btn').addEventListener('click', loadNextAnime);
 });
-
