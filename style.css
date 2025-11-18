@@ -112,9 +112,8 @@ body {
 /* Cover Image */
 .anime-cover {
     flex-shrink: 0;
-    width: 220px;
-    height: 293px;
-    object-fit: cover;
+    width: 250px;
+    height: 395px;
     border-radius: 12px;
     border: 2px solid var(--border);
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
@@ -402,3 +401,4 @@ body {
         width: 100%;
     }
 }
+
