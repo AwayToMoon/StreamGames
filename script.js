@@ -63,6 +63,7 @@ const animeData = [
 let currentIndex = 0;
 let ratings = {}; // Bewertungen nur im Arbeitsspeicher (werden nach Reload zurückgesetzt)
 // Struktur: ratings[animeId] = { higherCellF: rating, ogAle: rating }
+let appInitialized = false;
 
 // ============================================
 // RATING FUNCTIONS (nur im Arbeitsspeicher)
@@ -278,6 +279,7 @@ async function renderCurrentAnime() {
             </div>
         `;
         document.getElementById('load-more-btn').style.display = 'none';
+        updateProgressBar();
         return;
     }
     
@@ -288,6 +290,7 @@ async function renderCurrentAnime() {
     
     attachStarEvents();
     updateLoadMoreButton();
+    updateProgressBar();
     
     // Load trailer asynchronously
     if (currentAnime.malId) {
@@ -366,6 +369,7 @@ function attachStarEvents() {
                 }
                 
                 updateLoadMoreButton();
+                updateProgressBar();
             });
         });
     });
@@ -392,6 +396,30 @@ function updateLoadMoreButton() {
     }
 }
 
+function updateProgressBar() {
+    const progressText = document.getElementById('progress-text');
+    const progressPercentage = document.getElementById('progress-percentage');
+    const progressFill = document.getElementById('progress-fill');
+    
+    if (!progressText || !progressPercentage || !progressFill) return;
+    
+    const total = animeData.length;
+    let completed = Math.min(currentIndex, total);
+    
+    if (currentIndex < total) {
+        const currentAnime = animeData[currentIndex];
+        if (currentAnime && isAnimeFullyRated(currentAnime.id)) {
+            completed = Math.min(completed + 1, total);
+        }
+    }
+    
+    const percentage = total ? Math.round((completed / total) * 100) : 0;
+    
+    progressText.textContent = `${completed} / ${total} bewertet`;
+    progressPercentage.textContent = `${percentage}%`;
+    progressFill.style.width = `${percentage}%`;
+}
+
 async function loadNextAnime() {
     if (currentIndex < animeData.length) {
         const currentAnime = animeData[currentIndex];
@@ -411,11 +439,39 @@ async function loadNextAnime() {
 // INITIALIZATION
 // ============================================
 
+function initializeApp() {
+    if (appInitialized) return;
+    appInitialized = true;
+    
+    renderCurrentAnime();
+    
+    const loadMoreBtn = document.getElementById('load-more-btn');
+    if (loadMoreBtn && !loadMoreBtn.dataset.bound) {
+        loadMoreBtn.addEventListener('click', loadNextAnime);
+        loadMoreBtn.dataset.bound = 'true';
+    }
+}
+
+function setupIntroModal() {
+    const modal = document.getElementById('intro-modal');
+    const confirmBtn = document.getElementById('intro-confirm-btn');
+    
+    if (!modal || !confirmBtn) {
+        initializeApp();
+        return;
+    }
+    
+    modal.classList.add('visible');
+    
+    confirmBtn.addEventListener('click', () => {
+        modal.classList.remove('visible');
+        initializeApp();
+    }, { once: true });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     currentIndex = 0;
-    renderCurrentAnime();
-    document.getElementById('load-more-btn').addEventListener('click', loadNextAnime);
+    setupIntroModal();
 });
-
 
 
