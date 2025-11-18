@@ -185,11 +185,11 @@ async function loadTrailerForAnime(anime) {
                 </iframe>
             `;
         } else {
-            loadingDiv.innerHTML = '<p class="trailer-error">⚠️ Trailer nicht verfügbar. Bitte auf YouTube schauen.</p>';
+            loadingDiv.innerHTML = '<p class="trailer-error">⚠️ Trailer nicht verfügbar. Bitte auf YouTube schauen. ⚠️</p>';
             loadingDiv.classList.remove('with-iframe');
         }
     } else {
-        loadingDiv.innerHTML = '<p class="trailer-error">⚠️ Trailer nicht verfügbar. Bitte auf YouTube schauen.</p>';
+        loadingDiv.innerHTML = '<p class="trailer-error">⚠️ Trailer nicht verfügbar. Bitte auf YouTube schauen. ⚠️</p>';
         loadingDiv.classList.remove('with-iframe');
     }
 }
@@ -416,4 +416,5 @@ document.addEventListener('DOMContentLoaded', () => {
     renderCurrentAnime();
     document.getElementById('load-more-btn').addEventListener('click', loadNextAnime);
 });
+
 
