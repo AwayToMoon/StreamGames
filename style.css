@@ -65,6 +65,7 @@ body {
 .header p {
     color: var(--text-secondary);
     font-size: 1rem;
+    margin-bottom: 20px;
 }
 
 /* Content */
@@ -76,12 +77,9 @@ body {
 }
 
 .progress-section {
-    background: var(--bg-card);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 16px 20px;
-    margin-bottom: 10px;
-    box-shadow: var(--shadow);
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 0;
 }
 
 .modal-overlay {
@@ -176,27 +174,54 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
+    color: var(--text);
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.progress-info span:first-child {
     color: var(--text-secondary);
-    font-size: 0.95rem;
-    font-weight: 500;
+}
+
+.progress-info span:last-child {
+    background: linear-gradient(135deg, var(--primary), var(--success));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 700;
+    font-size: 1rem;
 }
 
 .progress-bar {
     width: 100%;
-    height: 12px;
-    background: rgba(255, 255, 255, 0.08);
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
     border-radius: 999px;
     overflow: hidden;
-    border: 1px solid var(--border);
+    position: relative;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 .progress-bar #progress-fill {
     height: 100%;
     width: 0%;
-    background: linear-gradient(135deg, var(--primary), var(--success));
+    background: linear-gradient(90deg, var(--primary), var(--success), var(--primary));
+    background-size: 200% 100%;
     border-radius: 999px;
-    transition: width 0.3s ease;
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    box-shadow: 0 0 10px rgba(122, 162, 255, 0.5), 0 0 20px rgba(61, 220, 151, 0.3);
+    animation: shimmer 2s infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
 }
 
 /* Anime Container */
@@ -363,6 +388,41 @@ body {
     justify-content: space-around;
     gap: 20px;
     flex-wrap: wrap;
+}
+
+.progress-section-inline {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 0;
+    min-width: 150px;
+}
+
+.progress-info-inline {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    color: var(--text);
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.progress-info-inline span:first-child {
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.progress-info-inline span:last-child {
+    background: linear-gradient(135deg, var(--primary), var(--success));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 700;
+    font-size: 1.2rem;
 }
 
 .rating-group {
@@ -547,8 +607,28 @@ body {
         padding: 16px;
     }
 
+    .header {
+        margin-left: -16px;
+        margin-right: -16px;
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+
     .header h1 {
         font-size: 2rem;
+    }
+
+    .progress-section {
+        max-width: 100%;
+        padding: 0 10px;
+    }
+
+    .progress-info {
+        font-size: 0.85rem;
+    }
+
+    .progress-info span:last-child {
+        font-size: 0.9rem;
     }
 
     .anime-content {
@@ -586,6 +666,23 @@ body {
 
     .rating-section-large {
         flex-direction: column;
+        gap: 15px;
+    }
+
+    .progress-section-inline {
+        width: 100%;
+        padding: 15px 0;
+        border-top: 1px solid var(--border);
+        border-bottom: 1px solid var(--border);
+        margin: 10px 0;
+    }
+
+    .progress-info-inline {
+        font-size: 0.8rem;
+    }
+
+    .progress-info-inline span:last-child {
+        font-size: 1rem;
     }
 
     .rating-group {
