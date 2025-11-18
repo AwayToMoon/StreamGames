@@ -17,6 +17,30 @@
                     <p>Made by Away2Moon</p>
         </header>
 
+        <div id="intro-modal" class="modal-overlay" aria-modal="true" role="dialog">
+            <div class="modal-content">
+                <h2>So funktioniert es ✨</h2>
+                <p>Ihr bewertet gemeinsam 50 Anime-Favoriten. Damit alles fair bleibt:</p>
+                <ul>
+                    <li>⭐ Bewertet jede Serie einzeln – HigherCellF und OGAle_ müssen beide abstimmen.</li>
+                    <li>🔒 Der Weiter-Button wird erst frei, wenn beide Bewertungen gespeichert sind.</li>
+                    <li>🎬 Trailer werden automatisch nachgeladen – falls keiner erscheint, einfach auf YouTube schauen.</li>
+                    <li>📊 Die Fortschrittsleiste zeigt jederzeit, wie viele Titel ihr schon geschafft habt.</li>
+                </ul>
+                <button id="intro-confirm-btn" class="btn-primary">Alles klar, los geht's! 🚀</button>
+            </div>
+        </div>
+
+        <section class="progress-section">
+            <div class="progress-info">
+                <span id="progress-text">0 / 50 bewertet</span>
+                <span id="progress-percentage">0%</span>
+            </div>
+            <div class="progress-bar">
+                <div id="progress-fill"></div>
+            </div>
+        </section>
+
         <main class="content">
             <div id="anime-container" class="anime-container">
                 <!-- Anime card wird hier generiert -->
