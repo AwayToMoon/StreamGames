@@ -224,7 +224,7 @@ function createAnimeCard(anime) {
                     </iframe>
                 </div>
                 ` : ''}
-                <p class="trailer-hint">⚠️ Falls der Trailer nicht funktioniert, bitte auf YouTube schauen</p>
+                <p class="trailer-hint">⚠️ Falls der Trailer nicht funktioniert, bitte auf YouTube schauen ⚠️</p>
             </div>
         </div>
         <div class="rating-section-large">
@@ -416,5 +416,6 @@ document.addEventListener('DOMContentLoaded', () => {
     renderCurrentAnime();
     document.getElementById('load-more-btn').addEventListener('click', loadNextAnime);
 });
+
 
 
