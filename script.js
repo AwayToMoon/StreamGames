@@ -622,6 +622,17 @@ function createAnimeCard(anime) {
                     ${ratingHigherCellF ? `${ratingHigherCellF}/5` : 'Wähle deine Bewertung'}
                 </p>
             </div>
+            
+            <div class="progress-section-inline">
+                <div class="progress-info-inline">
+                    <span id="progress-text">0 / 50 bewertet</span>
+                    <span id="progress-percentage">0%</span>
+                </div>
+                <div class="progress-bar" style="display: none;">
+                    <div id="progress-fill"></div>
+                </div>
+            </div>
+            
             <div class="rating-group">
                 <h3 class="rating-title">OGAle_</h3>
                 <div class="stars-rating-large" data-reviewer="ogAle">
