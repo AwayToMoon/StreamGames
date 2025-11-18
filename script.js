@@ -229,7 +229,7 @@ function createAnimeCard(anime) {
         </div>
         <div class="rating-section-large">
             <div class="rating-group">
-                <h3 class="rating-title">HigherCellF:</h3>
+                <h3 class="rating-title">HigherCellF</h3>
                 <div class="stars-rating-large" data-reviewer="higherCellF">
                     <span class="star-large" data-rating="1">☆</span>
                     <span class="star-large" data-rating="2">☆</span>
@@ -242,7 +242,7 @@ function createAnimeCard(anime) {
                 </p>
             </div>
             <div class="rating-group">
-                <h3 class="rating-title">OGAle_:</h3>
+                <h3 class="rating-title">OGAle_</h3>
                 <div class="stars-rating-large" data-reviewer="ogAle">
                     <span class="star-large" data-rating="1">☆</span>
                     <span class="star-large" data-rating="2">☆</span>
@@ -416,3 +416,4 @@ document.addEventListener('DOMContentLoaded', () => {
     renderCurrentAnime();
     document.getElementById('load-more-btn').addEventListener('click', loadNextAnime);
 });
+
