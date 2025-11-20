@@ -1,887 +1,346 @@
-// ============================================
-// ANIME BEWERTUNGS-APP
-// ============================================
-
-// Anime Daten (50 Animes mit MyAnimeList IDs)
-// Cover-URLs werden automatisch über Jikan/AniList APIs geladen für korrekte Bilder
-const animeData = [
-    { id: 1, malId: 16498, title: "Attack on Titan", cover: "", trailer: "" },
-    { id: 2, malId: 38000, title: "Demon Slayer: Kimetsu no Yaiba", cover: "", trailer: "" },
-    { id: 3, malId: 31964, title: "My Hero Academia", cover: "", trailer: "" },
-    { id: 4, malId: 40748, title: "Jujutsu Kaisen", cover: "", trailer: "" },
-    { id: 5, malId: 21, title: "One Piece", cover: "", trailer: "" },
-    { id: 6, malId: 20, title: "Naruto", cover: "", trailer: "" },
-    { id: 7, malId: 1535, title: "Death Note", cover: "", trailer: "" },
-    { id: 8, malId: 5114, title: "Fullmetal Alchemist: Brotherhood", cover: "", trailer: "" },
-    { id: 9, malId: 813, title: "Dragon Ball Z", cover: "", trailer: "" },
-    { id: 10, malId: 11061, title: "Hunter x Hunter (2011)", cover: "", trailer: "" },
-    { id: 11, malId: 22319, title: "Tokyo Ghoul", cover: "", trailer: "" },
-    { id: 12, malId: 30276, title: "One Punch Man", cover: "", trailer: "" },
-    { id: 13, malId: 32182, title: "Mob Psycho 100", cover: "", trailer: "" },
-    { id: 14, malId: 44511, title: "Chainsaw Man", cover: "", trailer: "" },
-    { id: 15, malId: 50265, title: "Spy x Family", cover: "", trailer: "" },
-    { id: 16, malId: 269, title: "Bleach", cover: "", trailer: "" },
-    { id: 17, malId: 6702, title: "Fairy Tail", cover: "", trailer: "" },
-    { id: 18, malId: 34572, title: "Black Clover", cover: "", trailer: "" },
-    { id: 19, malId: 38691, title: "Dr. Stone", cover: "", trailer: "" },
-    { id: 20, malId: 38671, title: "Fire Force", cover: "", trailer: "" },
-    { id: 21, malId: 37779, title: "The Promised Neverland", cover: "", trailer: "" },
-    { id: 22, malId: 37521, title: "Vinland Saga", cover: "", trailer: "" },
-    { id: 23, malId: 34599, title: "Made in Abyss", cover: "", trailer: "" },
-    { id: 24, malId: 31240, title: "Re:Zero - Starting Life in Another World", cover: "", trailer: "" },
-    { id: 25, malId: 29803, title: "Overlord", cover: "", trailer: "" },
-    { id: 26, malId: 37430, title: "That Time I Got Reincarnated as a Slime", cover: "", trailer: "" },
-    { id: 27, malId: 11757, title: "Sword Art Online", cover: "", trailer: "" },
-    { id: 28, malId: 19815, title: "No Game No Life", cover: "", trailer: "" },
-    { id: 29, malId: 30831, title: "KonoSuba: God's Blessing on This Wonderful World!", cover: "", trailer: "" },
-    { id: 30, malId: 20583, title: "Haikyuu!!", cover: "", trailer: "" },
-    { id: 31, malId: 11771, title: "Kuroko's Basketball", cover: "", trailer: "" },
-    { id: 32, malId: 49596, title: "Blue Lock", cover: "", trailer: "" },
-    { id: 33, malId: 32281, title: "Your Name", cover: "", trailer: "" },
-    { id: 34, malId: 38826, title: "Weathering With You", cover: "", trailer: "" },
-    { id: 35, malId: 28851, title: "A Silent Voice", cover: "", trailer: "" },
-    { id: 36, malId: 9253, title: "Steins;Gate", cover: "", trailer: "" },
-    { id: 37, malId: 1575, title: "Code Geass: Lelouch of the Rebellion", cover: "", trailer: "" },
-    { id: 38, malId: 13601, title: "Psycho-Pass", cover: "", trailer: "" },
-    { id: 39, malId: 1, title: "Cowboy Bebop", cover: "", trailer: "" },
-    { id: 40, malId: 30, title: "Neon Genesis Evangelion", cover: "", trailer: "" },
-    { id: 41, malId: 33, title: "Berserk", cover: "", trailer: "" },
-    { id: 42, malId: 14719, title: "JoJo's Bizarre Adventure", cover: "", trailer: "" },
-    { id: 43, malId: 30694, title: "Dragon Ball Super", cover: "", trailer: "" },
-    { id: 44, malId: 34566, title: "Boruto: Naruto Next Generations", cover: "", trailer: "" },
-    { id: 45, malId: 42249, title: "Tokyo Revengers", cover: "", trailer: "" },
-    { id: 46, malId: 50346, title: "Call of the Night", cover: "", trailer: "" },
-    { id: 47, malId: 52211, title: "Mashle: Magic and Muscles", cover: "", trailer: "" },
-    { id: 48, malId: 51179, title: "Mushoku Tensei: Jobless Reincarnation", cover: "", trailer: "" },
-    { id: 49, malId: 52991, title: "Frieren – Nach dem Ende der Reise", cover: "", trailer: "" },
-    { id: 50, malId: 52299, title: "Solo Leveling", cover: "", trailer: "" }
+// Anime Characters Data
+const characters = [
+    // Boys
+    { id: 1, name: "Naruto Uzumaki", series: "Naruto", gender: "boy", emoji: "🍜" },
+    { id: 2, name: "Goku", series: "Dragon Ball Z", gender: "boy", emoji: "🐉" },
+    { id: 3, name: "Luffy", series: "One Piece", gender: "boy", emoji: "🏴‍☠️" },
+    { id: 4, name: "Ichigo Kurosaki", series: "Bleach", gender: "boy", emoji: "⚔️" },
+    { id: 5, name: "Eren Yeager", series: "Attack on Titan", gender: "boy", emoji: "🗡️" },
+    { id: 6, name: "Levi Ackerman", series: "Attack on Titan", gender: "boy", emoji: "⚡" },
+    { id: 7, name: "Tanjiro Kamado", series: "Demon Slayer", gender: "boy", emoji: "🔥" },
+    { id: 8, name: "Zenitsu Agatsuma", series: "Demon Slayer", gender: "boy", emoji: "⚡" },
+    { id: 9, name: "Yuji Itadori", series: "Jujutsu Kaisen", gender: "boy", emoji: "👊" },
+    { id: 10, name: "Gojo Satoru", series: "Jujutsu Kaisen", gender: "boy", emoji: "😎" },
+    { id: 11, name: "Deku", series: "My Hero Academia", gender: "boy", emoji: "💪" },
+    { id: 12, name: "Kakashi Hatake", series: "Naruto", gender: "boy", emoji: "📖" },
+    { id: 13, name: "Sasuke Uchiha", series: "Naruto", gender: "boy", emoji: "👁️" },
+    { id: 14, name: "Light Yagami", series: "Death Note", gender: "boy", emoji: "📓" },
+    { id: 15, name: "L Lawliet", series: "Death Note", gender: "boy", emoji: "🍰" },
+    { id: 16, name: "Edward Elric", series: "Fullmetal Alchemist", gender: "boy", emoji: "⚙️" },
+    { id: 17, name: "Spike Spiegel", series: "Cowboy Bebop", gender: "boy", emoji: "🚀" },
+    { id: 18, name: "Killua Zoldyck", series: "Hunter x Hunter", gender: "boy", emoji: "⚡" },
+    { id: 19, name: "Gon Freecss", series: "Hunter x Hunter", gender: "boy", emoji: "🎣" },
+    { id: 20, name: "Saitama", series: "One Punch Man", gender: "boy", emoji: "👊" },
+    
+    // Girls
+    { id: 21, name: "Sakura Haruno", series: "Naruto", gender: "girl", emoji: "🌸" },
+    { id: 22, name: "Hinata Hyuga", series: "Naruto", gender: "girl", emoji: "👁️" },
+    { id: 23, name: "Nezuko Kamado", series: "Demon Slayer", gender: "girl", emoji: "👹" },
+    { id: 24, name: "Mikasa Ackerman", series: "Attack on Titan", gender: "girl", emoji: "🔪" },
+    { id: 25, name: "Nobara Kugisaki", series: "Jujutsu Kaisen", gender: "girl", emoji: "🔨" },
+    { id: 26, name: "Uraraka Ochaco", series: "My Hero Academia", gender: "girl", emoji: "✨" },
+    { id: 27, name: "Asuna", series: "Sword Art Online", gender: "girl", emoji: "⚔️" },
+    { id: 28, name: "Erza Scarlet", series: "Fairy Tail", gender: "girl", emoji: "🗡️" },
+    { id: 29, name: "Lucy Heartfilia", series: "Fairy Tail", gender: "girl", emoji: "⭐" },
+    { id: 30, name: "Winry Rockbell", series: "Fullmetal Alchemist", gender: "girl", emoji: "🔧" },
+    
+    // More Boys
+    { id: 31, name: "Vegeta", series: "Dragon Ball Z", gender: "boy", emoji: "👑" },
+    { id: 32, name: "Zoro", series: "One Piece", gender: "boy", emoji: "🗡️" },
+    { id: 33, name: "Sanji", series: "One Piece", gender: "boy", emoji: "👨‍🍳" },
+    { id: 34, name: "Ace", series: "One Piece", gender: "boy", emoji: "🔥" },
+    { id: 35, name: "Itachi Uchiha", series: "Naruto", gender: "boy", emoji: "👁️" },
+    { id: 36, name: "Shikamaru Nara", series: "Naruto", gender: "boy", emoji: "☁️" },
+    { id: 37, name: "Armin Arlert", series: "Attack on Titan", gender: "boy", emoji: "🧠" },
+    { id: 38, name: "Inosuke Hashibira", series: "Demon Slayer", gender: "boy", emoji: "🐗" },
+    { id: 39, name: "Megumi Fushiguro", series: "Jujutsu Kaisen", gender: "boy", emoji: "🐕" },
+    { id: 40, name: "Sukuna", series: "Jujutsu Kaisen", gender: "boy", emoji: "👹" },
+    { id: 41, name: "Bakugo", series: "My Hero Academia", gender: "boy", emoji: "💥" },
+    { id: 42, name: "Todoroki", series: "My Hero Academia", gender: "boy", emoji: "❄️" },
+    { id: 43, name: "All Might", series: "My Hero Academia", gender: "boy", emoji: "💪" },
+    { id: 44, name: "Roy Mustang", series: "Fullmetal Alchemist", gender: "boy", emoji: "🔥" },
+    { id: 45, name: "Alphonse Elric", series: "Fullmetal Alchemist", gender: "boy", emoji: "🛡️" },
+    { id: 46, name: "Hisoka", series: "Hunter x Hunter", gender: "boy", emoji: "🃏" },
+    { id: 47, name: "Kurapika", series: "Hunter x Hunter", gender: "boy", emoji: "👁️" },
+    { id: 48, name: "Genos", series: "One Punch Man", gender: "boy", emoji: "🤖" },
+    { id: 49, name: "Kirito", series: "Sword Art Online", gender: "boy", emoji: "⚔️" },
+    { id: 50, name: "Lelouch", series: "Code Geass", gender: "boy", emoji: "👑" },
+    { id: 51, name: "Roronoa Zoro", series: "One Piece", gender: "boy", emoji: "🗡️" },
+    { id: 53, name: "Asta", series: "Black Clover", gender: "boy", emoji: "⚔️" },
+    { id: 54, name: "Yami Sukehiro", series: "Black Clover", gender: "boy", emoji: "🌑" },
+    { id: 55, name: "Meliodas", series: "Seven Deadly Sins", gender: "boy", emoji: "😈" },
+    { id: 56, name: "Ban", series: "Seven Deadly Sins", gender: "boy", emoji: "🍺" },
+    { id: 57, name: "Escanor", series: "Seven Deadly Sins", gender: "boy", emoji: "☀️" },
+    { id: 58, name: "Rimuru Tempest", series: "That Time I Got Reincarnated", gender: "boy", emoji: "💧" },
+    { id: 59, name: "Subaru", series: "Re:Zero", gender: "boy", emoji: "🔄" },
+    { id: 60, name: "Kazuma", series: "Konosuba", gender: "boy", emoji: "💸" },
+    
+    // More Girls
+    { id: 61, name: "Zero Two", series: "Darling in the Franxx", gender: "girl", emoji: "🌸" },
+    { id: 62, name: "Rem", series: "Re:Zero", gender: "girl", emoji: "💙" },
+    { id: 63, name: "Emilia", series: "Re:Zero", gender: "girl", emoji: "💜" },
+    { id: 64, name: "Aqua", series: "Konosuba", gender: "girl", emoji: "💧" },
+    { id: 65, name: "Megumin", series: "Konosuba", gender: "girl", emoji: "💥" },
+    { id: 66, name: "Darkness", series: "Konosuba", gender: "girl", emoji: "🛡️" },
+    { id: 67, name: "Yor Forger", series: "Spy x Family", gender: "girl", emoji: "🗡️" },
+    { id: 68, name: "Anya Forger", series: "Spy x Family", gender: "girl", emoji: "🥜" },
+    { id: 69, name: "Power", series: "Chainsaw Man", gender: "girl", emoji: "👹" },
+    { id: 70, name: "Makima", series: "Chainsaw Man", gender: "girl", emoji: "👁️" },
+    { id: 71, name: "Kobeni", series: "Chainsaw Man", gender: "girl", emoji: "😰" },
+    { id: 72, name: "Maki Zenin", series: "Jujutsu Kaisen", gender: "girl", emoji: "⚔️" },
+    { id: 73, name: "Yuki Tsukumo", series: "Jujutsu Kaisen", gender: "girl", emoji: "⭐" },
+    { id: 74, name: "Momo Yaoyorozu", series: "My Hero Academia", gender: "girl", emoji: "✨" },
+    { id: 75, name: "Toga Himiko", series: "My Hero Academia", gender: "girl", emoji: "🔪" },
+    { id: 76, name: "Mitsuri Kanroji", series: "Demon Slayer", gender: "girl", emoji: "💕" },
+    { id: 77, name: "Shinobu Kocho", series: "Demon Slayer", gender: "girl", emoji: "🦋" },
+    { id: 78, name: "Kanao Tsuyuri", series: "Demon Slayer", gender: "girl", emoji: "🌸" },
+    { id: 79, name: "Historia Reiss", series: "Attack on Titan", gender: "girl", emoji: "👑" },
+    { id: 80, name: "Annie Leonhart", series: "Attack on Titan", gender: "girl", emoji: "🥊" },
+    { id: 81, name: "Yoruichi", series: "Bleach", gender: "girl", emoji: "🐱" },
+    { id: 82, name: "Rukia Kuchiki", series: "Bleach", gender: "girl", emoji: "❄️" },
+    { id: 83, name: "Orihime Inoue", series: "Bleach", gender: "girl", emoji: "🍊" },
+    { id: 84, name: "Nami", series: "One Piece", gender: "girl", emoji: "🍊" },
+    { id: 85, name: "Robin", series: "One Piece", gender: "girl", emoji: "🌺" },
+    { id: 86, name: "Boa Hancock", series: "One Piece", gender: "girl", emoji: "💋" },
+    { id: 87, name: "Tsunade", series: "Naruto", gender: "girl", emoji: "💎" },
+    { id: 88, name: "Temari", series: "Naruto", gender: "girl", emoji: "🌪️" },
+    { id: 89, name: "Mei Terumi", series: "Naruto", gender: "girl", emoji: "💧" },
+    { id: 90, name: "Raphtalia", series: "The Rising of the Shield Hero", gender: "girl", emoji: "🦝" },
 ];
 
-// ============================================
-// STATE MANAGEMENT
-// ============================================
+// Rankings: unranked, op, stark, mittel, schwach, sehr-schwach
+let rankings = {
+    'unranked': [],
+    'op': [],
+    'stark': [],
+    'mittel': [],
+    'schwach': [],
+    'sehr-schwach': []
+};
 
-let currentIndex = 0;
-let ratings = {}; // Bewertungen nur im Arbeitsspeicher (werden nach Reload zurückgesetzt)
-// Struktur: ratings[animeId] = { higherCellF: rating, ogAle: rating }
-let appInitialized = false;
+let isDragging = false;
 
-// ============================================
-// RATING FUNCTIONS (nur im Arbeitsspeicher)
-// ============================================
+// DOM Elements
+const rankingView = document.getElementById('ranking-view');
 
-function getRatings() {
-    return ratings;
-}
-
-function getAnimeRating(animeId, reviewer) {
-    if (!ratings[animeId]) return null;
-    return ratings[animeId][reviewer] || null;
-}
-
-function setAnimeRating(animeId, reviewer, rating) {
-    if (!ratings[animeId]) {
-        ratings[animeId] = {};
-    }
-    ratings[animeId][reviewer] = rating;
-}
-
-function isAnimeFullyRated(animeId) {
-    if (!ratings[animeId]) return false;
-    return ratings[animeId].higherCellF && ratings[animeId].ogAle;
-}
-
-function getRatingText(rating) {
-    const texts = {
-        1: "Schlecht",
-        2: "Okay",
-        3: "Gut",
-        4: "Sehr gut",
-        5: "Ausgezeichnet"
-    };
-    return texts[rating] || "Nicht bewertet";
-}
-
-// ============================================
-// COVER IMAGE API FUNCTIONS
-// ============================================
-
-// Fetch cover from Jikan API (MyAnimeList) - Most reliable and best quality
-async function fetchCoverFromJikan(malId) {
-    try {
-        // Add delay to respect rate limits (3 requests per second)
-        await new Promise(resolve => setTimeout(resolve, 350));
-        
-        const response = await fetch(`https://api.jikan.moe/v4/anime/${malId}/full`, {
-            method: 'GET',
-            headers: {
-                'Accept': 'application/json',
-            }
-        });
-
-        if (!response.ok) {
-            // If rate limited, try again after delay
-            if (response.status === 429) {
-                await new Promise(resolve => setTimeout(resolve, 1000));
-                const retryResponse = await fetch(`https://api.jikan.moe/v4/anime/${malId}/full`, {
-                    method: 'GET',
-                    headers: {
-                        'Accept': 'application/json',
-                    }
-                });
-                if (!retryResponse.ok) return null;
-                const retryData = await retryResponse.json();
-                if (retryData.data?.images?.jpg?.large_image_url) {
-                    return retryData.data.images.jpg.large_image_url;
-                } else if (retryData.data?.images?.jpg?.image_url) {
-                    return retryData.data.images.jpg.image_url;
-                }
-            }
-            return null;
-        }
-
-        const data = await response.json();
-        
-        // Jikan API provides high-quality images - prefer large_image_url
-        if (data.data?.images?.jpg?.large_image_url) {
-            return data.data.images.jpg.large_image_url;
-        } else if (data.data?.images?.jpg?.image_url) {
-            return data.data.images.jpg.image_url;
-        }
-        return null;
-    } catch (error) {
-        console.error('Jikan API error (cover):', error);
-        return null;
-    }
-}
-
-// Fetch cover from AniList API - High quality backup option
-async function fetchCoverFromAniList(malId) {
-    try {
-        const query = `
-            query ($id: Int, $type: MediaType) {
-                Media(idMal: $id, type: $type) {
-                    coverImage {
-                        extraLarge
-                        large
-                        medium
-                    }
-                }
-            }
-        `;
-
-        const response = await fetch('https://graphql.anilist.co', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-            },
-            body: JSON.stringify({
-                query: query,
-                variables: { id: malId, type: 'ANIME' }
-            })
-        });
-
-        if (!response.ok) return null;
-
-        const data = await response.json();
-        
-        // Try extraLarge first (best quality), then large, then medium
-        if (data.data?.Media?.coverImage?.extraLarge) {
-            return data.data.Media.coverImage.extraLarge;
-        } else if (data.data?.Media?.coverImage?.large) {
-            return data.data.Media.coverImage.large;
-        } else if (data.data?.Media?.coverImage?.medium) {
-            return data.data.Media.coverImage.medium;
-        }
-        return null;
-    } catch (error) {
-        console.error('AniList API error (cover):', error);
-        return null;
-    }
-}
-
-// ============================================
-// TRAILER API FUNCTIONS
-// ============================================
-
-async function fetchTrailerFromAniList(malId) {
-    try {
-        const query = `
-            query ($id: Int, $type: MediaType) {
-                Media(idMal: $id, type: $type) {
-                    trailer {
-                        id
-                        site
-                    }
-                }
-            }
-        `;
-
-        const response = await fetch('https://graphql.anilist.co', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json',
-            },
-            body: JSON.stringify({
-                query: query,
-                variables: { id: malId, type: 'ANIME' }
-            })
-        });
-
-        if (!response.ok) return null;
-
-        const data = await response.json();
-        
-        if (data.data?.Media?.trailer?.id && data.data.Media.trailer.site === 'youtube') {
-            const videoId = String(data.data.Media.trailer.id).trim();
-            // Validate YouTube video ID (11 characters)
-            if (/^[a-zA-Z0-9_-]{11}$/.test(videoId)) {
-                return `https://www.youtube.com/embed/${videoId}`;
-            }
-        }
-        return null;
-    } catch (error) {
-        console.error('AniList API error:', error);
-        return null;
-    }
-}
-
-// Legacy function kept for compatibility, but loadCoverForAnime handles everything now
-async function handleImageError(imgElement, animeId, malId, title) {
-    const wrapper = imgElement.closest('.anime-cover-wrapper');
-    if (!wrapper) return;
+// Load rankings from localStorage
+function loadRankings() {
+    const saved = localStorage.getItem('anime-rankings');
+    const version = localStorage.getItem('anime-rankings-version');
     
-    const loadingDiv = wrapper.querySelector('.anime-cover-loading');
-    if (loadingDiv) {
-        loadingDiv.textContent = '🔄 Versuche alternatives Bild...';
+    // Check if we need to migrate old data or if it's first load
+    if (!saved || !version || version !== '2.0') {
+        // Reset all characters to unranked (first load or migration)
+        rankings = {
+            'unranked': characters.map(c => c.id),
+            'op': [],
+            'stark': [],
+            'mittel': [],
+            'schwach': [],
+            'sehr-schwach': []
+        };
+        localStorage.setItem('anime-rankings-version', '2.0');
+        saveRankings();
+    } else {
+        rankings = JSON.parse(saved);
+        // Ensure unranked exists
+        if (!rankings.unranked) {
+            rankings.unranked = [];
+        }
+        
+        // Ensure all characters are in a category (add missing ones to unranked)
+        const allRankedIds = [
+            ...rankings.unranked,
+            ...rankings.op,
+            ...rankings.stark,
+            ...rankings.mittel,
+            ...rankings.schwach,
+            ...rankings['sehr-schwach']
+        ];
+        
+        const allCharacterIds = characters.map(c => c.id);
+        const missingIds = allCharacterIds.filter(id => !allRankedIds.includes(id));
+        
+        if (missingIds.length > 0) {
+            rankings.unranked = [...rankings.unranked, ...missingIds];
+            saveRankings();
+        }
     }
     
-    // Try Jikan API first, then AniList API if we have a malId
-    if (malId) {
-        try {
-            // Try Jikan API (best quality)
-            let coverUrl = await fetchCoverFromJikan(malId);
-            if (coverUrl) {
-                const works = await testImageUrl(coverUrl);
-                if (works) {
-                    imgElement.src = coverUrl;
-                    imgElement.onerror = () => {
-                        showPlaceholderImage(imgElement, wrapper, title);
-                    };
-                    if (loadingDiv) loadingDiv.style.display = 'none';
-                    return;
-                }
-            }
+    renderRankings();
+}
+
+// Save rankings to localStorage
+function saveRankings() {
+    localStorage.setItem('anime-rankings', JSON.stringify(rankings));
+    updateCounts();
+}
+
+// Update count badges
+function updateCounts() {
+    document.getElementById('count-unranked').textContent = rankings.unranked.length;
+    document.getElementById('count-op').textContent = rankings.op.length;
+    document.getElementById('count-stark').textContent = rankings.stark.length;
+    document.getElementById('count-mittel').textContent = rankings.mittel.length;
+    document.getElementById('count-schwach').textContent = rankings.schwach.length;
+    document.getElementById('count-sehr-schwach').textContent = rankings['sehr-schwach'].length;
+}
+
+// Render Rankings
+function renderRankings() {
+    const rankTypes = ['unranked', 'op', 'stark', 'mittel', 'schwach', 'sehr-schwach'];
+    
+    rankTypes.forEach(rank => {
+        const list = document.getElementById(`list-${rank}`);
+        if (list) {
+            list.innerHTML = '';
             
-            // Try AniList API as backup
-            coverUrl = await fetchCoverFromAniList(malId);
-            if (coverUrl) {
-                const works = await testImageUrl(coverUrl);
-                if (works) {
-                    imgElement.src = coverUrl;
-                    imgElement.onerror = () => {
-                        showPlaceholderImage(imgElement, wrapper, title);
-                    };
-                    if (loadingDiv) loadingDiv.style.display = 'none';
-                    return;
+            rankings[rank].forEach(charId => {
+                const char = characters.find(c => c.id === charId);
+                if (char) {
+                    const card = createRankingCard(char, rank);
+                    list.appendChild(card);
                 }
-            }
-        } catch (error) {
-            console.error('Error fetching cover from APIs:', error);
+            });
         }
+    });
+    
+    updateCounts();
+}
+
+// Open Google image search modal for character
+function searchCharacter(char) {
+    const searchQuery = encodeURIComponent(`${char.name} ${char.series} anime`);
+    const modal = document.getElementById('image-search-modal');
+    const iframe = document.getElementById('google-image-iframe');
+    const characterName = document.getElementById('modal-character-name');
+    
+    // Set character name in modal header
+    characterName.textContent = `${char.name} - Bilder`;
+    
+    // Set iframe source
+    iframe.src = `https://www.google.com/search?tbm=isch&q=${searchQuery}`;
+    
+    // Show modal
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+// Close image search modal
+function closeImageModal() {
+    const modal = document.getElementById('image-search-modal');
+    const iframe = document.getElementById('google-image-iframe');
+    
+    modal.classList.remove('active');
+    document.body.style.overflow = 'auto';
+    
+    // Clear iframe to stop loading
+    iframe.src = '';
+}
+
+// Setup modal event listeners
+function setupImageModal() {
+    const modal = document.getElementById('image-search-modal');
+    const closeBtn = document.getElementById('close-image-modal');
+    
+    if (closeBtn) {
+        closeBtn.addEventListener('click', closeImageModal);
     }
     
-    // Final fallback to placeholder
-    showPlaceholderImage(imgElement, wrapper, title);
-}
-
-function showPlaceholderImage(imgElement, wrapper, title) {
-    const loadingDiv = wrapper.querySelector('.anime-cover-loading');
-    const placeholderUrl = `https://via.placeholder.com/250x395/1a1f2e/7aa2ff?text=${encodeURIComponent(title)}`;
-    imgElement.src = placeholderUrl;
-    imgElement.onerror = null; // Prevent infinite loop
-    if (loadingDiv) loadingDiv.style.display = 'none';
-}
-
-async function testImageUrl(url) {
-    return new Promise((resolve) => {
-        if (!url) {
-            resolve(false);
-            return;
+    // Close on background click
+    if (modal) {
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeImageModal();
+            }
+        });
+    }
+    
+    // Close on Escape key
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && modal.classList.contains('active')) {
+            closeImageModal();
         }
-        const img = new Image();
-        let resolved = false;
-        
-        const cleanup = () => {
-            if (!resolved) {
-                resolved = true;
-                img.onload = null;
-                img.onerror = null;
-            }
-        };
-        
-        img.onload = () => {
-            cleanup();
-            resolve(true);
-        };
-        img.onerror = () => {
-            cleanup();
-            resolve(false);
-        };
-        
-        // Add timeout
-        setTimeout(() => {
-            if (!resolved) {
-                cleanup();
-                resolve(false);
-            }
-        }, 5000); // Increased timeout to 5 seconds
-        
-        img.src = url;
     });
 }
 
-async function loadCoverForAnime(anime) {
-    const card = document.querySelector(`[data-anime-id="${anime.id}"]`);
-    if (!card) return;
-    
-    const img = card.querySelector('.anime-cover');
-    const wrapper = card.querySelector('.anime-cover-wrapper');
-    const loadingDiv = wrapper?.querySelector('.anime-cover-loading');
-    
-    if (!img || !wrapper || !anime.malId) {
-        if (!anime.malId && loadingDiv) {
-            loadingDiv.textContent = '⚠️ Keine MyAnimeList ID';
-            showPlaceholderImage(img, wrapper, anime.title);
-        }
-        return;
-    }
-    
-    // Store expected anime ID to prevent wrong images
-    const expectedAnimeId = anime.id;
-    const expectedMalId = anime.malId;
-    
-    // Verify card still matches this anime (prevent race conditions)
-    if (parseInt(card.dataset.animeId) !== expectedAnimeId) {
-        return; // Card changed, don't load image
-    }
-    
-    if (loadingDiv) loadingDiv.textContent = '🖼️ Lade Bild...';
-    
-    // Try AniList API first (often faster and more reliable)
-    let coverUrl = await fetchCoverFromAniList(anime.malId);
-    
-    // Verify card still matches
-    if (parseInt(card.dataset.animeId) !== expectedAnimeId) {
-        return; // Card changed, don't load image
-    }
-    
-    // If AniList fails, try Jikan API (MyAnimeList official API)
-    if (!coverUrl) {
-        if (loadingDiv) loadingDiv.textContent = '🔄 Versuche Jikan API...';
-        coverUrl = await fetchCoverFromJikan(anime.malId);
-        
-        // Verify card still matches
-        if (parseInt(card.dataset.animeId) !== expectedAnimeId) {
-            return; // Card changed, don't load image
-        }
-    }
-    
-    // If both APIs failed, try direct MyAnimeList URL patterns
-    if (!coverUrl) {
-        if (loadingDiv) loadingDiv.textContent = '🔄 Versuche alternatives Bild...';
-        
-        // Try different MyAnimeList CDN URL patterns
-        const urlPatterns = [
-            `https://cdn.myanimelist.net/images/anime/${Math.floor(anime.malId / 1000)}/${anime.malId}.jpg`,
-            `https://cdn.myanimelist.net/images/anime/${Math.floor(anime.malId / 100)}/${anime.malId}.jpg`,
-            `https://cdn.myanimelist.net/images/anime/${anime.malId}.jpg`
-        ];
-        
-        for (const url of urlPatterns) {
-            // Verify card still matches before each attempt
-            if (parseInt(card.dataset.animeId) !== expectedAnimeId) {
-                return; // Card changed, don't load image
-            }
-            
-            const works = await testImageUrl(url);
-            if (works) {
-                coverUrl = url;
-                break;
-            }
-        }
-    }
-    
-    // Final verification before loading image
-    if (parseInt(card.dataset.animeId) !== expectedAnimeId) {
-        return; // Card changed, don't load image
-    }
-    
-    // Set up load handler
-    img.onload = () => {
-        // Verify this is still the correct anime before hiding loading
-        if (parseInt(card.dataset.animeId) === expectedAnimeId) {
-            if (loadingDiv) loadingDiv.style.display = 'none';
-        }
-    };
-    
-    // Set up error handler - try placeholder if image fails
-    img.onerror = () => {
-        // Verify this is still the correct anime
-        if (parseInt(card.dataset.animeId) === expectedAnimeId) {
-            if (loadingDiv) loadingDiv.textContent = '⚠️ Bild konnte nicht geladen werden';
-            setTimeout(() => {
-                if (parseInt(card.dataset.animeId) === expectedAnimeId) {
-                    showPlaceholderImage(img, wrapper, anime.title);
-                }
-            }, 1000);
-        }
-    };
-    
-    // Load the image
-    if (coverUrl) {
-        img.src = coverUrl;
-        // Store malId in image data attribute for verification
-        img.dataset.malId = expectedMalId;
-    } else {
-        // No cover found, show placeholder
-        if (parseInt(card.dataset.animeId) === expectedAnimeId) {
-            if (loadingDiv) loadingDiv.textContent = '⚠️ Kein Bild gefunden';
-            showPlaceholderImage(img, wrapper, anime.title);
-        }
-    }
-}
-
-async function tryNextCoverSource(img, wrapper, loadingDiv, anime, attempt, isLoadedCallback) {
-    if (isLoadedCallback && isLoadedCallback()) {
-        return; // Already loaded
-    }
-    
-    // Strategy based on attempt number:
-    // Attempt 0: Try Jikan API
-    // Attempt 1: Try AniList API  
-    // Attempt 2: Try direct MyAnimeList URL (if not already tried)
-    // Attempt 3+: Show placeholder
-    
-    if (attempt === 0 && anime.malId) {
-        // Try Jikan API
-        if (loadingDiv) loadingDiv.textContent = '🔄 Versuche Jikan API...';
-        try {
-            const coverUrl = await fetchCoverFromJikan(anime.malId);
-            if (coverUrl) {
-                const works = await testImageUrl(coverUrl);
-                if (works) {
-                    img.src = coverUrl;
-                    await new Promise(resolve => setTimeout(resolve, 500));
-                    if (img.complete && img.naturalHeight > 0) {
-                        return; // Success!
-                    }
-                }
-            }
-        } catch (error) {
-            console.error('Error fetching cover from Jikan:', error);
-        }
-    }
-    
-    if (attempt === 1 && anime.malId) {
-        // Try AniList API
-        if (loadingDiv) loadingDiv.textContent = '🔄 Versuche AniList API...';
-        try {
-            const coverUrl = await fetchCoverFromAniList(anime.malId);
-            if (coverUrl) {
-                const works = await testImageUrl(coverUrl);
-                if (works) {
-                    img.src = coverUrl;
-                    await new Promise(resolve => setTimeout(resolve, 500));
-                    if (img.complete && img.naturalHeight > 0) {
-                        return; // Success!
-                    }
-                }
-            }
-        } catch (error) {
-            console.error('Error fetching cover from AniList:', error);
-        }
-    }
-    
-    if (attempt === 2 && anime.cover) {
-        // Try direct MyAnimeList URL as last resort
-        if (loadingDiv) loadingDiv.textContent = '🔄 Versuche alternatives Bild...';
-        const malUrlWorks = await testImageUrl(anime.cover);
-        if (malUrlWorks) {
-            img.src = anime.cover;
-            await new Promise(resolve => setTimeout(resolve, 500));
-            if (img.complete && img.naturalHeight > 0) {
-                return; // Success!
-            }
-        }
-    }
-    
-    // If all attempts failed and image still not loaded
-    if (!isLoadedCallback || !isLoadedCallback()) {
-        if (loadingDiv) loadingDiv.textContent = '⚠️ Bild konnte nicht geladen werden';
-        setTimeout(() => {
-            if (!isLoadedCallback || !isLoadedCallback()) {
-                showPlaceholderImage(img, wrapper, anime.title);
-            }
-        }, 1000);
-    }
-}
-
-// This function is no longer used, replaced by tryNextCoverSource
-// Keeping for backwards compatibility
-async function tryAniListFallback(img, wrapper, loadingDiv, anime, isLoadedCallback) {
-    await tryNextCoverSource(img, wrapper, loadingDiv, anime, 0, isLoadedCallback || (() => false));
-}
-
-async function loadTrailerForAnime(anime) {
-    if (!anime.malId || (anime.trailer && anime.trailer !== "")) {
-        return;
-    }
-
-    const infoContainer = document.querySelector(`[data-anime-id="${anime.id}"] .anime-info`);
-    if (!infoContainer) return;
-
-    // Show loading state
-    let loadingDiv = infoContainer.querySelector('.anime-trailer');
-    if (!loadingDiv) {
-        loadingDiv = document.createElement('div');
-        loadingDiv.className = 'anime-trailer';
-        loadingDiv.innerHTML = '<p>Lade Trailer...</p>';
-        infoContainer.appendChild(loadingDiv);
-    }
-
-    // Fetch trailer
-    await new Promise(resolve => setTimeout(resolve, 300));
-    const trailerUrl = await fetchTrailerFromAniList(anime.malId);
-
-    if (trailerUrl) {
-        anime.trailer = trailerUrl;
-        const videoId = trailerUrl.split('/').pop().split('?')[0];
-        
-        if (/^[a-zA-Z0-9_-]{11}$/.test(videoId)) {
-            loadingDiv.classList.add('with-iframe');
-            loadingDiv.innerHTML = `
-                <iframe 
-                    src="${trailerUrl}?rel=0&modestbranding=1&autoplay=0" 
-                    frameborder="0" 
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-                    allowfullscreen
-                    referrerpolicy="strict-origin-when-cross-origin"
-                    title="Trailer für ${anime.title}">
-                </iframe>
-            `;
-        } else {
-            loadingDiv.innerHTML = '<p class="trailer-error">⚠️ Trailer nicht verfügbar. Bitte auf YouTube schauen. ⚠️</p>';
-            loadingDiv.classList.remove('with-iframe');
-        }
-    } else {
-        loadingDiv.innerHTML = '<p class="trailer-error">⚠️ Trailer nicht verfügbar. Bitte auf YouTube schauen. ⚠️</p>';
-        loadingDiv.classList.remove('with-iframe');
-    }
-}
-
-// ============================================
-// UI FUNCTIONS
-// ============================================
-
-function createAnimeCard(anime) {
-    const ratingHigherCellF = getAnimeRating(anime.id, 'higherCellF');
-    const ratingOGAle = getAnimeRating(anime.id, 'ogAle');
-    
+// Create ranking card
+function createRankingCard(char, rank) {
     const card = document.createElement('div');
-    card.className = 'anime-card';
-    card.dataset.animeId = anime.id;
+    card.className = 'ranking-card';
+    card.draggable = true;
+    card.dataset.charId = char.id;
+    card.dataset.currentRank = rank;
     
     card.innerHTML = `
-        <div class="anime-content">
-            <div class="anime-cover-wrapper">
-                <div class="anime-cover-loading">🖼️ Lade Bild...</div>
-                <img src="" alt="${anime.title}" class="anime-cover" 
-                     loading="lazy"
-                     data-anime-id="${anime.id}"
-                     data-mal-id="${anime.malId || ''}"
-                     data-title="${anime.title.replace(/"/g, '&quot;')}">
-            </div>
-            <div class="anime-info">
-                <h2 class="anime-title">${anime.title}</h2>
-            </div>
-        </div>
-        <div class="rating-section-large">
-            <div class="rating-group">
-                <h3 class="rating-title">HigherCellF</h3>
-                <div class="stars-rating-large" data-reviewer="higherCellF">
-                    <span class="star-large" data-rating="1">☆</span>
-                    <span class="star-large" data-rating="2">☆</span>
-                    <span class="star-large" data-rating="3">☆</span>
-                    <span class="star-large" data-rating="4">☆</span>
-                    <span class="star-large" data-rating="5">☆</span>
-                </div>
-                <p class="rating-text-large" id="rating-display-${anime.id}-higherCellF">
-                    ${ratingHigherCellF ? `${ratingHigherCellF}/5` : 'Wähle deine Bewertung'}
-                </p>
-            </div>
-            
-            <div class="progress-section-inline">
-                <div class="progress-info-inline">
-                    <span id="progress-text">0 / 50 bewertet</span>
-                    <span id="progress-percentage">0%</span>
-                </div>
-                <div class="progress-bar" style="display: none;">
-                    <div id="progress-fill"></div>
-                </div>
-            </div>
-            
-            <div class="rating-group">
-                <h3 class="rating-title">OGAle_</h3>
-                <div class="stars-rating-large" data-reviewer="ogAle">
-                    <span class="star-large" data-rating="1">☆</span>
-                    <span class="star-large" data-rating="2">☆</span>
-                    <span class="star-large" data-rating="3">☆</span>
-                    <span class="star-large" data-rating="4">☆</span>
-                    <span class="star-large" data-rating="5">☆</span>
-                </div>
-                <p class="rating-text-large" id="rating-display-${anime.id}-ogAle">
-                    ${ratingOGAle ? `${ratingOGAle}/5` : 'Wähle deine Bewertung'}
-                </p>
-            </div>
-            ${isAnimeFullyRated(anime.id) ? `
-                <div class="rating-saved-message">
-                    ✓ Beide Bewertungen gespeichert! Du kannst jetzt weiter klicken.
-                </div>
-            ` : ''}
+        <div class="ranking-card-emoji">${char.emoji}</div>
+        <div class="ranking-card-info">
+            <div class="ranking-card-name">${char.name}</div>
+            <div class="ranking-card-series">${char.series}</div>
         </div>
     `;
+    
+    card.addEventListener('dragstart', drag);
+    card.addEventListener('dragend', dragEnd);
+    
+    // Add click handler for Google search
+    card.addEventListener('click', (e) => {
+        // Don't trigger if dragging
+        if (!isDragging) {
+            searchCharacter(char);
+        }
+    });
+    
+    // Add cursor pointer style
+    card.style.cursor = 'pointer';
     
     return card;
 }
 
-async function renderCurrentAnime() {
-    const container = document.getElementById('anime-container');
-    
-    if (currentIndex >= animeData.length) {
-        container.innerHTML = `
-            <div class="anime-card finished">
-                <div class="finished-message">
-                    <h2>🎉 Alle Animes bewertet!</h2>
-                    <p>Du hast alle ${animeData.length} Animes erfolgreich bewertet.</p>
-                </div>
-            </div>
-        `;
-        document.getElementById('load-more-btn').style.display = 'none';
-        const skipBtn = document.getElementById('skip-btn');
-        if (skipBtn) skipBtn.style.display = 'none';
-        updateProgressBar();
-        return;
-    }
-    
-    const currentAnime = animeData[currentIndex];
-    container.innerHTML = '';
-    const card = createAnimeCard(currentAnime);
-    container.appendChild(card);
-    
-    attachStarEvents();
-    updateLoadMoreButton();
-    updateProgressBar();
-    
-    // Load cover asynchronously
-    loadCoverForAnime(currentAnime).catch(console.error);
-    
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+// Drag and Drop Functions
+function allowDrop(ev) {
+    ev.preventDefault();
+    ev.currentTarget.classList.add('drag-over');
 }
 
-function attachStarEvents() {
-    const card = document.querySelector('.anime-card');
-    if (!card) return;
-    
-    const animeId = parseInt(card.dataset.animeId);
-    const ratingGroups = card.querySelectorAll('.stars-rating-large');
-    
-    ratingGroups.forEach(group => {
-        const reviewer = group.dataset.reviewer;
-        const stars = group.querySelectorAll('.star-large');
-        
-        // Helper function to get current rating dynamically
-        const getCurrentRating = () => getAnimeRating(animeId, reviewer);
-        
-        // Set existing rating on load
-        const existingRating = getCurrentRating();
-        if (existingRating) {
-            stars.forEach((star, index) => {
-                star.classList.toggle('active', index + 1 <= existingRating);
-            });
-        }
-        
-        // Attach events
-        stars.forEach(star => {
-            const rating = parseInt(star.dataset.rating);
-            
-            star.addEventListener('mouseenter', () => {
-                stars.forEach((s, i) => {
-                    s.classList.toggle('active', i < rating);
-                });
-            });
-            
-            star.addEventListener('mouseleave', () => {
-                const currentRating = getCurrentRating();
-                if (currentRating) {
-                    stars.forEach((s, i) => {
-                        s.classList.toggle('active', i < currentRating);
-                    });
-                } else {
-                    stars.forEach(s => s.classList.remove('active'));
-                }
-            });
-            
-            star.addEventListener('click', () => {
-                setAnimeRating(animeId, reviewer, rating);
-                
-                // Update display - set all stars up to rating as active
-                stars.forEach((s, i) => {
-                    s.classList.toggle('active', i < rating);
-                });
-                
-                const ratingDisplay = document.getElementById(`rating-display-${animeId}-${reviewer}`);
-                if (ratingDisplay) {
-                    ratingDisplay.textContent = `${rating}/5`;
-                }
-                
-                // Show saved message if both rated
-                if (isAnimeFullyRated(animeId)) {
-                    const ratingSection = card.querySelector('.rating-section-large');
-                    let savedMsg = ratingSection.querySelector('.rating-saved-message');
-                    if (!savedMsg) {
-                        savedMsg = document.createElement('div');
-                        savedMsg.className = 'rating-saved-message';
-                        ratingSection.appendChild(savedMsg);
-                    }
-                    savedMsg.textContent = '✓ Beide Bewertungen gespeichert! Du kannst jetzt weiter klicken.';
-                }
-                
-                updateLoadMoreButton();
-                updateProgressBar();
-            });
-        });
+function drag(ev) {
+    isDragging = true;
+    ev.dataTransfer.setData("text", ev.target.dataset.charId);
+    ev.target.classList.add('dragging');
+}
+
+function dragEnd(ev) {
+    ev.target.classList.remove('dragging');
+    document.querySelectorAll('.ranking-list').forEach(list => {
+        list.classList.remove('drag-over');
     });
+    // Reset dragging flag after a short delay to prevent click event
+    setTimeout(() => {
+        isDragging = false;
+    }, 100);
 }
 
-function updateLoadMoreButton() {
-    const btn = document.getElementById('load-more-btn');
-    if (!btn) return;
+function drop(ev) {
+    ev.preventDefault();
+    ev.currentTarget.classList.remove('drag-over');
     
-    if (currentIndex >= animeData.length) {
-        btn.style.display = 'none';
-        return;
-    }
+    const charId = parseInt(ev.dataTransfer.getData("text"));
+    const newRank = ev.currentTarget.parentElement.dataset.rank;
     
-    const currentAnime = animeData[currentIndex];
-    const fullyRated = isAnimeFullyRated(currentAnime.id);
+    // Remove from old rank
+    Object.keys(rankings).forEach(rank => {
+        rankings[rank] = rankings[rank].filter(id => id !== charId);
+    });
     
-    if (fullyRated) {
-        btn.disabled = false;
-        btn.querySelector('span').textContent = 'Weiter';
-    } else {
-        btn.disabled = true;
-        btn.querySelector('span').textContent = 'Bitte beide Bewertungen abgeben';
-    }
+    // Add to new rank
+    rankings[newRank].push(charId);
+    
+    saveRankings();
+    renderRankings();
 }
 
-function updateProgressBar() {
-    const progressText = document.getElementById('progress-text');
-    const progressPercentage = document.getElementById('progress-percentage');
-    const progressFill = document.getElementById('progress-fill');
-    
-    if (!progressText || !progressPercentage || !progressFill) return;
-    
-    const total = animeData.length;
-    let completed = Math.min(currentIndex, total);
-    
-    if (currentIndex < total) {
-        const currentAnime = animeData[currentIndex];
-        if (currentAnime && isAnimeFullyRated(currentAnime.id)) {
-            completed = Math.min(completed + 1, total);
-        }
-    }
-    
-    const percentage = total ? Math.round((completed / total) * 100) : 0;
-    
-    progressText.textContent = `${completed} / ${total} bewertet`;
-    progressPercentage.textContent = `${percentage}%`;
-    progressFill.style.width = `${percentage}%`;
+// Setup Event Listeners
+function setupEventListeners() {
+    // No additional event listeners needed for ranking-only view
 }
 
-async function loadNextAnime() {
-    if (currentIndex < animeData.length) {
-        const currentAnime = animeData[currentIndex];
-        const fullyRated = isAnimeFullyRated(currentAnime.id);
-        
-        if (!fullyRated) {
-            alert('Bitte gib beide Bewertungen (HigherCellF und OGAle_) ab, bevor du weitermachst!');
-            return;
-        }
-    }
-    
-    currentIndex++;
-    await renderCurrentAnime();
+
+// Initialize
+function init() {
+    loadRankings();
+    setupEventListeners();
+    setupImageModal();
 }
 
-async function skipAnime() {
-    if (currentIndex >= animeData.length) {
-        return;
-    }
-    
-    // Skip to next anime without requiring ratings
-    currentIndex++;
-    await renderCurrentAnime();
-}
-
-// ============================================
-// INITIALIZATION
-// ============================================
-
-function initializeApp() {
-    if (appInitialized) return;
-    appInitialized = true;
-    
-    renderCurrentAnime();
-    
-    const loadMoreBtn = document.getElementById('load-more-btn');
-    if (loadMoreBtn && !loadMoreBtn.dataset.bound) {
-        loadMoreBtn.addEventListener('click', loadNextAnime);
-        loadMoreBtn.dataset.bound = 'true';
-    }
-    
-    const skipBtn = document.getElementById('skip-btn');
-    if (skipBtn && !skipBtn.dataset.bound) {
-        skipBtn.addEventListener('click', skipAnime);
-        skipBtn.dataset.bound = 'true';
-    }
-}
-
-function setupIntroModal() {
-    const modal = document.getElementById('intro-modal');
-    const confirmBtn = document.getElementById('intro-confirm-btn');
-    
-    if (!modal || !confirmBtn) {
-        initializeApp();
-        return;
-    }
-    
-    modal.classList.add('visible');
-    
-    confirmBtn.addEventListener('click', () => {
-        modal.classList.remove('visible');
-        initializeApp();
-    }, { once: true });
-}
-
-// Make handleImageError globally available for inline onerror handler
-window.handleImageError = handleImageError;
-
-document.addEventListener('DOMContentLoaded', () => {
-    currentIndex = 0;
-    setupIntroModal();
-});
-
-
+// Initialize on load
+document.addEventListener('DOMContentLoaded', init);
