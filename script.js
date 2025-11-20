@@ -199,7 +199,15 @@ function loadRankings() {
             
             // Show notification if update came from another user (not first load)
             if (!isFirstLoad && JSON.stringify(oldRankings) !== JSON.stringify(rankings)) {
-                showUpdateNotification();
+                const updatedBy = data.lastUpdatedBy || 'Jemand';
+                const updatedByUserId = data.lastUpdatedByUserId;
+                
+                // Only show notification if it wasn't us who made the change
+                if (updatedByUserId !== userId) {
+                    // Find which character was moved
+                    const movedCharacter = findMovedCharacter(oldRankings, rankings);
+                    showUpdateNotification(updatedBy, movedCharacter);
+                }
             }
             
             isFirstLoad = false;
@@ -302,12 +310,65 @@ function loadRankings() {
     });
 }
 
+// Find which character was moved between rankings
+function findMovedCharacter(oldRankings, newRankings) {
+    // Check each tier for changes
+    for (const tier of ['unranked', 's-tier', 'a-tier', 'b-tier', 'c-tier', 'd-tier']) {
+        const oldIds = oldRankings[tier] || [];
+        const newIds = newRankings[tier] || [];
+        
+        // Find characters that were added to this tier
+        const added = newIds.filter(id => !oldIds.includes(id));
+        if (added.length > 0) {
+            const charId = added[0];
+            const character = characters.find(c => c.id === charId);
+            if (character) {
+                // Find which tier it came from
+                let fromTier = 'unranked';
+                for (const t of ['unranked', 's-tier', 'a-tier', 'b-tier', 'c-tier', 'd-tier']) {
+                    if (oldRankings[t] && oldRankings[t].includes(charId)) {
+                        fromTier = t;
+                        break;
+                    }
+                }
+                return {
+                    character: character,
+                    fromTier: fromTier,
+                    toTier: tier
+                };
+            }
+        }
+    }
+    return null;
+}
+
 // Show notification when rankings are updated by another user
-function showUpdateNotification() {
+function showUpdateNotification(username, movedCharacter) {
     // Create a temporary notification
     const notification = document.createElement('div');
     notification.className = 'update-notification';
-    notification.innerHTML = '<i class="fas fa-sync-alt"></i> Rankings wurden aktualisiert!';
+    
+    let message = `<i class="fas fa-user-circle"></i> <strong>${username}</strong> hat `;
+    
+    if (movedCharacter) {
+        const charName = movedCharacter.character.name;
+        const tierLabels = {
+            'unranked': 'Unranked',
+            's-tier': 'S Tier',
+            'a-tier': 'A Tier',
+            'b-tier': 'B Tier',
+            'c-tier': 'C Tier',
+            'd-tier': 'D Tier'
+        };
+        const fromTier = tierLabels[movedCharacter.fromTier] || movedCharacter.fromTier;
+        const toTier = tierLabels[movedCharacter.toTier] || movedCharacter.toTier;
+        
+        message += `<strong>${charName}</strong> von <strong>${fromTier}</strong> zu <strong>${toTier}</strong> gerankt!`;
+    } else {
+        message += 'Rankings aktualisiert!';
+    }
+    
+    notification.innerHTML = message;
     document.body.appendChild(notification);
     
     setTimeout(() => {
@@ -317,7 +378,7 @@ function showUpdateNotification() {
     setTimeout(() => {
         notification.classList.remove('show');
         setTimeout(() => notification.remove(), 300);
-    }, 3000);
+    }, 5000); // Show for 5 seconds
 }
 
 // Fallback: Load from localStorage if Firebase is not available
@@ -366,7 +427,9 @@ function saveRankings() {
             'b-tier': rankings['b-tier'],
             'c-tier': rankings['c-tier'],
             'd-tier': rankings['d-tier'],
-            lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+            lastUpdated: firebase.firestore.FieldValue.serverTimestamp(),
+            lastUpdatedBy: currentUsername || 'Unbekannt',
+            lastUpdatedByUserId: userId || null
         }, { merge: true })
         .catch((error) => {
             console.error('Error saving rankings to Firebase:', error);
