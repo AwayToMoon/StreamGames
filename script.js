@@ -147,7 +147,7 @@ function loadRankings() {
     rankingsRef.onSnapshot((doc) => {
         updateConnectionStatus(true, true);
         
-        if (doc.exists()) {
+        if (doc.exists) {
             const data = doc.data();
             const oldRankings = JSON.parse(JSON.stringify(rankings));
             
