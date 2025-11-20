@@ -156,7 +156,56 @@ body::before {
     font-size: 1.3rem;
     color: #94a3b8;
     font-weight: 400;
+    margin-bottom: 10px;
+}
+
+/* Connection Status */
+.connection-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 20px;
+    font-size: 0.85rem;
+    color: #94a3b8;
     margin-bottom: 15px;
+    transition: all 0.3s ease;
+}
+
+.connection-status i {
+    font-size: 0.7rem;
+    animation: pulse 2s ease-in-out infinite;
+}
+
+.connection-status.connected {
+    background: rgba(16, 185, 129, 0.1);
+    border-color: rgba(16, 185, 129, 0.3);
+    color: #10b981;
+}
+
+.connection-status.connected i {
+    color: #10b981;
+}
+
+.connection-status.disconnected {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: rgba(239, 68, 68, 0.3);
+    color: #ef4444;
+}
+
+.connection-status.disconnected i {
+    color: #ef4444;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
 }
 
 @keyframes fadeInDown {
@@ -1150,6 +1199,43 @@ body::before {
     .welcome-btn {
         width: 100%;
     }
+}
+
+/* Update Notification */
+.update-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.95), rgba(99, 102, 241, 0.95));
+    backdrop-filter: blur(20px);
+    border: 2px solid rgba(139, 92, 246, 0.5);
+    border-radius: 12px;
+    padding: 15px 20px;
+    color: white;
+    font-weight: 600;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 8px 32px rgba(139, 92, 246, 0.4);
+    z-index: 10000;
+    opacity: 0;
+    transform: translateX(100%);
+    transition: all 0.3s ease;
+}
+
+.update-notification.show {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.update-notification i {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
 }
 
 /* Footer Text in Header */
