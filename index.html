@@ -36,6 +36,14 @@
                 <i class="fas fa-circle"></i>
                 <span id="connection-text">Verbinde...</span>
             </div>
+            <!-- Benutzerliste -->
+            <div class="users-container" id="users-container">
+                <div class="users-header">
+                    <i class="fas fa-users"></i>
+                    <span>Aktive Benutzer (<span id="users-count">0</span>)</span>
+                </div>
+                <div class="users-list" id="users-list"></div>
+            </div>
             <p class="footer-text">
                 Made with <span class="heart">❤️</span> by <span class="author">Away2moon</span>
             </p>
@@ -94,6 +102,30 @@
             </div>
         </div>
 
+    </div>
+
+    <!-- Username Modal - VOR dem Welcome Modal -->
+    <div id="username-modal" class="username-modal">
+        <div class="username-modal-content">
+            <div class="username-modal-header">
+                <h2><i class="fas fa-user"></i> Benutzername eingeben</h2>
+            </div>
+            <div class="username-modal-body">
+                <p>Gib einen Benutzernamen ein, um zu beginnen:</p>
+                <input 
+                    type="text" 
+                    id="username-input" 
+                    class="username-input" 
+                    placeholder="Dein Benutzername..."
+                    maxlength="20"
+                    autocomplete="off"
+                >
+                <p class="username-hint">Dieser Name wird anderen Benutzern angezeigt</p>
+            </div>
+            <div class="username-modal-footer">
+                <button class="username-btn" id="username-submit" disabled>Los geht's!</button>
+            </div>
+        </div>
     </div>
 
     <!-- Welcome Modal -->
