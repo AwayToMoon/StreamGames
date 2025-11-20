@@ -561,52 +561,52 @@ body::before {
     gap: 8px;
 }
 
-.ranking-header.op {
+.ranking-header.s-tier {
     background: linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(245, 158, 11, 0.1));
     border-bottom-color: rgba(251, 191, 36, 0.3);
 }
 
-.ranking-header.op h2 {
+.ranking-header.s-tier h2 {
     color: #fbbf24;
     text-shadow: 0 0 20px rgba(251, 191, 36, 0.5);
 }
 
-.ranking-header.stark {
+.ranking-header.a-tier {
     background: linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(220, 38, 38, 0.1));
     border-bottom-color: rgba(239, 68, 68, 0.3);
 }
 
-.ranking-header.stark h2 {
+.ranking-header.a-tier h2 {
     color: #ef4444;
     text-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
 }
 
-.ranking-header.mittel {
+.ranking-header.b-tier {
     background: linear-gradient(135deg, rgba(59, 130, 246, 0.2), rgba(37, 99, 235, 0.1));
     border-bottom-color: rgba(59, 130, 246, 0.3);
 }
 
-.ranking-header.mittel h2 {
+.ranking-header.b-tier h2 {
     color: #3b82f6;
     text-shadow: 0 0 20px rgba(59, 130, 246, 0.5);
 }
 
-.ranking-header.schwach {
+.ranking-header.c-tier {
     background: linear-gradient(135deg, rgba(251, 146, 60, 0.2), rgba(249, 115, 22, 0.1));
     border-bottom-color: rgba(251, 146, 60, 0.3);
 }
 
-.ranking-header.schwach h2 {
+.ranking-header.c-tier h2 {
     color: #fb923c;
     text-shadow: 0 0 20px rgba(251, 146, 60, 0.5);
 }
 
-.ranking-header.unnoetig {
+.ranking-header.d-tier {
     background: linear-gradient(135deg, rgba(107, 114, 128, 0.2), rgba(75, 85, 99, 0.1));
     border-bottom-color: rgba(107, 114, 128, 0.3);
 }
 
-.ranking-header.unnoetig h2 {
+.ranking-header.d-tier h2 {
     color: #6b7280;
     text-shadow: 0 0 20px rgba(107, 114, 128, 0.5);
 }
@@ -756,31 +756,31 @@ body::before {
     font-size: 0.8rem;
 }
 
-.rank-tag.rank-op {
+.rank-tag.rank-s-tier {
     background: linear-gradient(45deg, rgba(251, 191, 36, 0.3), rgba(245, 158, 11, 0.2));
     border-color: rgba(251, 191, 36, 0.4);
     color: #fbbf24;
 }
 
-.rank-tag.rank-stark {
+.rank-tag.rank-a-tier {
     background: linear-gradient(45deg, rgba(239, 68, 68, 0.3), rgba(220, 38, 38, 0.2));
     border-color: rgba(239, 68, 68, 0.4);
     color: #ef4444;
 }
 
-.rank-tag.rank-mittel {
+.rank-tag.rank-b-tier {
     background: linear-gradient(45deg, rgba(59, 130, 246, 0.3), rgba(37, 99, 235, 0.2));
     border-color: rgba(59, 130, 246, 0.4);
     color: #3b82f6;
 }
 
-.rank-tag.rank-schwach {
+.rank-tag.rank-c-tier {
     background: linear-gradient(45deg, rgba(251, 146, 60, 0.3), rgba(249, 115, 22, 0.2));
     border-color: rgba(251, 146, 60, 0.4);
     color: #fb923c;
 }
 
-.rank-tag.rank-unnoetig {
+.rank-tag.rank-d-tier {
     background: linear-gradient(45deg, rgba(107, 114, 128, 0.3), rgba(75, 85, 99, 0.2));
     border-color: rgba(107, 114, 128, 0.4);
     color: #6b7280;
@@ -1037,31 +1037,31 @@ body::before {
     border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-.rank-badge.op {
+.rank-badge.s-tier {
     background: linear-gradient(45deg, rgba(251, 191, 36, 0.3), rgba(245, 158, 11, 0.2));
     color: #fbbf24;
     border-color: rgba(251, 191, 36, 0.4);
 }
 
-.rank-badge.stark {
+.rank-badge.a-tier {
     background: linear-gradient(45deg, rgba(239, 68, 68, 0.3), rgba(220, 38, 38, 0.2));
     color: #ef4444;
     border-color: rgba(239, 68, 68, 0.4);
 }
 
-.rank-badge.mittel {
+.rank-badge.b-tier {
     background: linear-gradient(45deg, rgba(59, 130, 246, 0.3), rgba(37, 99, 235, 0.2));
     color: #3b82f6;
     border-color: rgba(59, 130, 246, 0.4);
 }
 
-.rank-badge.schwach {
+.rank-badge.c-tier {
     background: linear-gradient(45deg, rgba(251, 146, 60, 0.3), rgba(249, 115, 22, 0.2));
     color: #fb923c;
     border-color: rgba(251, 146, 60, 0.4);
 }
 
-.rank-badge.unnoetig {
+.rank-badge.d-tier {
     background: linear-gradient(45deg, rgba(107, 114, 128, 0.3), rgba(75, 85, 99, 0.2));
     color: #6b7280;
     border-color: rgba(107, 114, 128, 0.4);
