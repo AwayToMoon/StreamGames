@@ -204,6 +204,7 @@ function loadRankings() {
                 'd-tier': []
             };
             saveRankings();
+            renderRankings();
             isFirstLoad = false;
         }
     }, (error) => {
@@ -453,6 +454,11 @@ function closeWelcomeModal(dontShowAgain) {
 
 // Initialize
 function init() {
+    // Wait a bit for Firebase to initialize
+    if (typeof firebase === 'undefined' || typeof db === 'undefined') {
+        setTimeout(init, 100);
+        return;
+    }
     loadRankings();
     setupEventListeners();
 }
