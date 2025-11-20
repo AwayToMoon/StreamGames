@@ -3,48 +3,100 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Referrer-Policy" content="strict-origin-when-cross-origin">
-    <title>Anime Bewertungen</title>
+    <title>Anime Character Liste</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="app">
+    <!-- Animated Background -->
+    <div class="particles-container">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
+    <div class="container">
+        <!-- Header -->
         <header class="header">
-            <h1>⭐ Anime Bewerten mit Emir & Ale ⭐</h1>
-            <p>Made by Away2Moon</p>
+            <h1 class="title">
+                <span class="title-icon">⚡</span>
+                Anime Character Ranking
+            </h1>
+            <p class="subtitle">Ranke Charaktere von OP bis Sehr Schwach</p>
         </header>
 
-        <div id="intro-modal" class="modal-overlay" aria-modal="true" role="dialog">
-            <div class="modal-content">
-                <h2>So funktioniert es ✨</h2>
-                <p>Ihr bewertet gemeinsam 50 Anime-Favoriten. Damit alles fair bleibt:</p>
-                <ul>
-                    <li>⭐ Bewertet jede Serie einzeln – HigherCellF und OGAle_ müssen beide abstimmen.</li>
-                    <li>🔒 Der Weiter-Button wird erst frei, wenn beide Bewertungen gespeichert sind.</li>
-                    <li>📊 Die Fortschrittsleiste zeigt jederzeit, wie viele Titel ihr schon geschafft habt.</li>
-                </ul>
-                <button id="intro-confirm-btn" class="btn-primary">Alles klar, los geht's! 🚀</button>
+        <!-- Ranking View -->
+        <div id="ranking-view" class="ranking-view active">
+            <div class="ranking-container">
+                <div class="ranking-column" data-rank="unranked">
+                    <div class="ranking-header unranked">
+                        <h2><i class="fas fa-question-circle"></i> Unranked</h2>
+                        <span class="count" id="count-unranked">0</span>
+                    </div>
+                    <div class="ranking-list" id="list-unranked" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                </div>
+
+                <div class="ranking-column" data-rank="op">
+                    <div class="ranking-header op">
+                        <h2><i class="fas fa-crown"></i> OP</h2>
+                        <span class="count" id="count-op">0</span>
+                    </div>
+                    <div class="ranking-list" id="list-op" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                </div>
+
+                <div class="ranking-column" data-rank="stark">
+                    <div class="ranking-header stark">
+                        <h2><i class="fas fa-fire"></i> Stark</h2>
+                        <span class="count" id="count-stark">0</span>
+                    </div>
+                    <div class="ranking-list" id="list-stark" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                </div>
+
+                <div class="ranking-column" data-rank="mittel">
+                    <div class="ranking-header mittel">
+                        <h2><i class="fas fa-balance-scale"></i> Mittel</h2>
+                        <span class="count" id="count-mittel">0</span>
+                    </div>
+                    <div class="ranking-list" id="list-mittel" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                </div>
+
+                <div class="ranking-column" data-rank="schwach">
+                    <div class="ranking-header schwach">
+                        <h2><i class="fas fa-exclamation-triangle"></i> Schwach</h2>
+                        <span class="count" id="count-schwach">0</span>
+                    </div>
+                    <div class="ranking-list" id="list-schwach" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                </div>
+
+                <div class="ranking-column" data-rank="sehr-schwach">
+                    <div class="ranking-header sehr-schwach">
+                        <h2><i class="fas fa-times-circle"></i> Sehr Schwach</h2>
+                        <span class="count" id="count-sehr-schwach">0</span>
+                    </div>
+                    <div class="ranking-list" id="list-sehr-schwach" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                </div>
             </div>
         </div>
 
-        <main class="content">
-            <div id="anime-container" class="anime-container">
-                <!-- Anime card wird hier generiert -->
+    </div>
+
+    <!-- Image Search Modal -->
+    <div id="image-search-modal" class="image-modal">
+        <div class="image-modal-content">
+            <div class="image-modal-header">
+                <h2 id="modal-character-name">Charakter Bilder</h2>
+                <button class="image-modal-close" id="close-image-modal">&times;</button>
             </div>
-            
-            <div class="load-more-container">
-                <button id="skip-btn" class="btn-skip">
-                    <span>⏭️ Überspringen</span>
-                </button>
-                <button id="load-more-btn" class="btn-load-more" disabled>
-                    <span>Bitte erst bewerten</span>
-                    <i class="arrow">→</i>
-                </button>
+            <div class="image-modal-body">
+                <iframe id="google-image-iframe" src="" frameborder="0"></iframe>
             </div>
-        </main>
+        </div>
     </div>
 
     <script src="script.js"></script>
