@@ -1277,3 +1277,214 @@ body::before {
     background-clip: text;
     font-weight: 700;
 }
+
+/* Username Modal */
+.username-modal {
+    display: none;
+    position: fixed;
+    z-index: 10000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(10px);
+    animation: fadeIn 0.3s ease;
+}
+
+.username-modal.active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.username-modal-content {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border-radius: 20px;
+    padding: 0;
+    max-width: 450px;
+    width: 90%;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    animation: slideUp 0.4s ease;
+}
+
+.username-modal-header {
+    padding: 25px 30px;
+    border-bottom: 1px solid rgba(139, 92, 246, 0.2);
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(236, 72, 153, 0.1) 100%);
+    border-radius: 20px 20px 0 0;
+}
+
+.username-modal-header h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #e5e7eb;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.username-modal-body {
+    padding: 30px;
+}
+
+.username-modal-body p {
+    margin-bottom: 15px;
+    color: #d1d5db;
+    font-size: 0.95rem;
+}
+
+.username-input {
+    width: 100%;
+    padding: 15px 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(139, 92, 246, 0.3);
+    border-radius: 12px;
+    color: #e5e7eb;
+    font-size: 1rem;
+    font-family: 'Inter', sans-serif;
+    transition: all 0.3s ease;
+    outline: none;
+}
+
+.username-input:focus {
+    border-color: #8b5cf6;
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+}
+
+.username-input::placeholder {
+    color: #6b7280;
+}
+
+.username-hint {
+    margin-top: 10px;
+    font-size: 0.85rem;
+    color: #9ca3af;
+    opacity: 0.8;
+}
+
+.username-modal-footer {
+    padding: 20px 30px;
+    border-top: 1px solid rgba(139, 92, 246, 0.2);
+    display: flex;
+    justify-content: flex-end;
+}
+
+.username-btn {
+    padding: 12px 30px;
+    background: linear-gradient(135deg, #8b5cf6 0%, #ec4899 100%);
+    border: none;
+    border-radius: 10px;
+    color: white;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Inter', sans-serif;
+}
+
+.username-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(139, 92, 246, 0.4);
+}
+
+.username-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* Benutzerliste */
+.users-container {
+    margin: 20px 0;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 12px;
+    border: 1px solid rgba(139, 92, 246, 0.2);
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.users-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 12px;
+    color: #e5e7eb;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.users-header i {
+    color: #8b5cf6;
+}
+
+.users-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    max-height: 120px;
+    overflow-y: auto;
+}
+
+.user-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(236, 72, 153, 0.2) 100%);
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    border-radius: 20px;
+    font-size: 0.85rem;
+    color: #e5e7eb;
+    transition: all 0.3s ease;
+}
+
+.user-badge:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+}
+
+.user-badge.online {
+    border-color: #10b981;
+}
+
+.user-badge.online::before {
+    content: '';
+    width: 8px;
+    height: 8px;
+    background: #10b981;
+    border-radius: 50%;
+    display: inline-block;
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+/* Custom Scrollbar für users-list */
+.users-list::-webkit-scrollbar {
+    width: 6px;
+}
+
+.users-list::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
+}
+
+.users-list::-webkit-scrollbar-thumb {
+    background: rgba(139, 92, 246, 0.5);
+    border-radius: 3px;
+}
+
+.users-list::-webkit-scrollbar-thumb:hover {
+    background: rgba(139, 92, 246, 0.7);
+}
