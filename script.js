@@ -98,14 +98,14 @@ const characters = [
     { id: 90, name: "Raphtalia", series: "The Rising of the Shield Hero", gender: "girl", emoji: "🦝" },
 ];
 
-// Rankings: unranked, op, stark, mittel, schwach, sehr-schwach
+// Rankings: unranked, op, stark, mittel, schwach, unnoetig
 let rankings = {
     'unranked': [],
     'op': [],
     'stark': [],
     'mittel': [],
     'schwach': [],
-    'sehr-schwach': []
+    'unnoetig': []
 };
 
 let isDragging = false;
@@ -119,23 +119,45 @@ function loadRankings() {
     const version = localStorage.getItem('anime-rankings-version');
     
     // Check if we need to migrate old data or if it's first load
-    if (!saved || !version || version !== '2.0') {
-        // Reset all characters to unranked (first load or migration)
-        rankings = {
-            'unranked': characters.map(c => c.id),
-            'op': [],
-            'stark': [],
-            'mittel': [],
-            'schwach': [],
-            'sehr-schwach': []
-        };
-        localStorage.setItem('anime-rankings-version', '2.0');
+    if (!saved || !version || version !== '2.1') {
+        // Migrate old data or reset
+        if (saved) {
+            const oldRankings = JSON.parse(saved);
+            // Migrate from sehr-schwach to unnoetig
+            rankings = {
+                'unranked': oldRankings.unranked || [],
+                'op': oldRankings.op || [],
+                'stark': oldRankings.stark || [],
+                'mittel': oldRankings.mittel || [],
+                'schwach': oldRankings.schwach || [],
+                'unnoetig': oldRankings['sehr-schwach'] || []
+            };
+        } else {
+            // Reset all characters to unranked (first load)
+            rankings = {
+                'unranked': characters.map(c => c.id),
+                'op': [],
+                'stark': [],
+                'mittel': [],
+                'schwach': [],
+                'unnoetig': []
+            };
+        }
+        localStorage.setItem('anime-rankings-version', '2.1');
         saveRankings();
     } else {
         rankings = JSON.parse(saved);
         // Ensure unranked exists
         if (!rankings.unranked) {
             rankings.unranked = [];
+        }
+        // Ensure unnoetig exists (migration)
+        if (!rankings.unnoetig && rankings['sehr-schwach']) {
+            rankings.unnoetig = rankings['sehr-schwach'];
+            delete rankings['sehr-schwach'];
+        }
+        if (!rankings.unnoetig) {
+            rankings.unnoetig = [];
         }
         
         // Ensure all characters are in a category (add missing ones to unranked)
@@ -145,7 +167,7 @@ function loadRankings() {
             ...rankings.stark,
             ...rankings.mittel,
             ...rankings.schwach,
-            ...rankings['sehr-schwach']
+            ...rankings.unnoetig
         ];
         
         const allCharacterIds = characters.map(c => c.id);
@@ -173,12 +195,12 @@ function updateCounts() {
     document.getElementById('count-stark').textContent = rankings.stark.length;
     document.getElementById('count-mittel').textContent = rankings.mittel.length;
     document.getElementById('count-schwach').textContent = rankings.schwach.length;
-    document.getElementById('count-sehr-schwach').textContent = rankings['sehr-schwach'].length;
+    document.getElementById('count-unnoetig').textContent = rankings.unnoetig.length;
 }
 
 // Render Rankings
 function renderRankings() {
-    const rankTypes = ['unranked', 'op', 'stark', 'mittel', 'schwach', 'sehr-schwach'];
+    const rankTypes = ['unranked', 'op', 'stark', 'mittel', 'schwach', 'unnoetig'];
     
     rankTypes.forEach(rank => {
         const list = document.getElementById(`list-${rank}`);
@@ -198,60 +220,10 @@ function renderRankings() {
     updateCounts();
 }
 
-// Open Google image search modal for character
+// Open Google image search for character
 function searchCharacter(char) {
     const searchQuery = encodeURIComponent(`${char.name} ${char.series} anime`);
-    const modal = document.getElementById('image-search-modal');
-    const iframe = document.getElementById('google-image-iframe');
-    const characterName = document.getElementById('modal-character-name');
-    
-    // Set character name in modal header
-    characterName.textContent = `${char.name} - Bilder`;
-    
-    // Set iframe source
-    iframe.src = `https://www.google.com/search?tbm=isch&q=${searchQuery}`;
-    
-    // Show modal
-    modal.classList.add('active');
-    document.body.style.overflow = 'hidden';
-}
-
-// Close image search modal
-function closeImageModal() {
-    const modal = document.getElementById('image-search-modal');
-    const iframe = document.getElementById('google-image-iframe');
-    
-    modal.classList.remove('active');
-    document.body.style.overflow = 'auto';
-    
-    // Clear iframe to stop loading
-    iframe.src = '';
-}
-
-// Setup modal event listeners
-function setupImageModal() {
-    const modal = document.getElementById('image-search-modal');
-    const closeBtn = document.getElementById('close-image-modal');
-    
-    if (closeBtn) {
-        closeBtn.addEventListener('click', closeImageModal);
-    }
-    
-    // Close on background click
-    if (modal) {
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) {
-                closeImageModal();
-            }
-        });
-    }
-    
-    // Close on Escape key
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape' && modal.classList.contains('active')) {
-            closeImageModal();
-        }
-    });
+    window.open(`https://www.google.com/search?tbm=isch&q=${searchQuery}`, '_blank');
 }
 
 // Create ranking card
@@ -331,15 +303,55 @@ function drop(ev) {
 
 // Setup Event Listeners
 function setupEventListeners() {
-    // No additional event listeners needed for ranking-only view
+    // Welcome modal event listeners
+    setupWelcomeModal();
 }
 
+// Welcome Modal Functions
+function setupWelcomeModal() {
+    const welcomeModal = document.getElementById('welcome-modal');
+    const closeBtn = document.getElementById('close-welcome-modal');
+    const understoodBtn = document.getElementById('welcome-understood');
+    const dontShowAgain = document.getElementById('dont-show-again');
+    
+    // Check if user has seen the welcome modal
+    const hasSeenWelcome = localStorage.getItem('has-seen-welcome');
+    
+    if (!hasSeenWelcome) {
+        // Show modal after a short delay
+        setTimeout(() => {
+            welcomeModal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }, 500);
+    }
+    
+    // Understood button - only way to close the modal
+    if (understoodBtn) {
+        understoodBtn.addEventListener('click', () => {
+            closeWelcomeModal(dontShowAgain.checked);
+        });
+    }
+    
+    // Hide close button (X) - user must click "Verstanden!"
+    if (closeBtn) {
+        closeBtn.style.display = 'none';
+    }
+}
+
+function closeWelcomeModal(dontShowAgain) {
+    const welcomeModal = document.getElementById('welcome-modal');
+    welcomeModal.classList.remove('active');
+    document.body.style.overflow = 'auto';
+    
+    if (dontShowAgain) {
+        localStorage.setItem('has-seen-welcome', 'true');
+    }
+}
 
 // Initialize
 function init() {
     loadRankings();
     setupEventListeners();
-    setupImageModal();
 }
 
 // Initialize on load
