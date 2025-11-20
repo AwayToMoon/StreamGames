@@ -98,14 +98,14 @@ const characters = [
     { id: 90, name: "Raphtalia", series: "The Rising of the Shield Hero", gender: "girl", emoji: "🦝" },
 ];
 
-// Rankings: unranked, op, stark, mittel, schwach, unnoetig
+// Rankings: unranked, s-tier, a-tier, b-tier, c-tier, d-tier
 let rankings = {
     'unranked': [],
-    'op': [],
-    'stark': [],
-    'mittel': [],
-    'schwach': [],
-    'unnoetig': []
+    's-tier': [],
+    'a-tier': [],
+    'b-tier': [],
+    'c-tier': [],
+    'd-tier': []
 };
 
 let isDragging = false;
@@ -119,31 +119,31 @@ function loadRankings() {
     const version = localStorage.getItem('anime-rankings-version');
     
     // Check if we need to migrate old data or if it's first load
-    if (!saved || !version || version !== '2.1') {
+    if (!saved || !version || version !== '3.0') {
         // Migrate old data or reset
         if (saved) {
             const oldRankings = JSON.parse(saved);
-            // Migrate from sehr-schwach to unnoetig
+            // Migrate from old system (op/stark/mittel/schwach/unnoetig) to new tier system
             rankings = {
                 'unranked': oldRankings.unranked || [],
-                'op': oldRankings.op || [],
-                'stark': oldRankings.stark || [],
-                'mittel': oldRankings.mittel || [],
-                'schwach': oldRankings.schwach || [],
-                'unnoetig': oldRankings['sehr-schwach'] || []
+                's-tier': oldRankings.op || oldRankings['s-tier'] || [],
+                'a-tier': oldRankings.stark || oldRankings['a-tier'] || [],
+                'b-tier': oldRankings.mittel || oldRankings['b-tier'] || [],
+                'c-tier': oldRankings.schwach || oldRankings['c-tier'] || [],
+                'd-tier': oldRankings.unnoetig || oldRankings['sehr-schwach'] || oldRankings['d-tier'] || []
             };
         } else {
             // Reset all characters to unranked (first load)
             rankings = {
                 'unranked': characters.map(c => c.id),
-                'op': [],
-                'stark': [],
-                'mittel': [],
-                'schwach': [],
-                'unnoetig': []
+                's-tier': [],
+                'a-tier': [],
+                'b-tier': [],
+                'c-tier': [],
+                'd-tier': []
             };
         }
-        localStorage.setItem('anime-rankings-version', '2.1');
+        localStorage.setItem('anime-rankings-version', '3.0');
         saveRankings();
     } else {
         rankings = JSON.parse(saved);
@@ -151,23 +151,43 @@ function loadRankings() {
         if (!rankings.unranked) {
             rankings.unranked = [];
         }
-        // Ensure unnoetig exists (migration)
-        if (!rankings.unnoetig && rankings['sehr-schwach']) {
-            rankings.unnoetig = rankings['sehr-schwach'];
+        // Migrate old tier names if they exist
+        if (rankings.op && !rankings['s-tier']) {
+            rankings['s-tier'] = rankings.op;
+            delete rankings.op;
+        }
+        if (rankings.stark && !rankings['a-tier']) {
+            rankings['a-tier'] = rankings.stark;
+            delete rankings.stark;
+        }
+        if (rankings.mittel && !rankings['b-tier']) {
+            rankings['b-tier'] = rankings.mittel;
+            delete rankings.mittel;
+        }
+        if (rankings.schwach && !rankings['c-tier']) {
+            rankings['c-tier'] = rankings.schwach;
+            delete rankings.schwach;
+        }
+        if ((rankings.unnoetig || rankings['sehr-schwach']) && !rankings['d-tier']) {
+            rankings['d-tier'] = rankings.unnoetig || rankings['sehr-schwach'] || [];
+            delete rankings.unnoetig;
             delete rankings['sehr-schwach'];
         }
-        if (!rankings.unnoetig) {
-            rankings.unnoetig = [];
-        }
+        // Ensure all new tiers exist
+        if (!rankings['s-tier']) rankings['s-tier'] = [];
+        if (!rankings['a-tier']) rankings['a-tier'] = [];
+        if (!rankings['b-tier']) rankings['b-tier'] = [];
+        if (!rankings['c-tier']) rankings['c-tier'] = [];
+        if (!rankings['d-tier']) rankings['d-tier'] = [];
         
         // Ensure all characters are in a category (add missing ones to unranked)
         const allRankedIds = [
             ...rankings.unranked,
-            ...rankings.op,
-            ...rankings.stark,
-            ...rankings.mittel,
-            ...rankings.schwach,
-            ...rankings.unnoetig
+            ...rankings['s-tier'],
+            ...rankings['a-tier'],
+            ...rankings['b-tier'],
+            ...rankings['c-tier'],
+            ...rankings['d-tier']
         ];
         
         const allCharacterIds = characters.map(c => c.id);
@@ -191,16 +211,16 @@ function saveRankings() {
 // Update count badges
 function updateCounts() {
     document.getElementById('count-unranked').textContent = rankings.unranked.length;
-    document.getElementById('count-op').textContent = rankings.op.length;
-    document.getElementById('count-stark').textContent = rankings.stark.length;
-    document.getElementById('count-mittel').textContent = rankings.mittel.length;
-    document.getElementById('count-schwach').textContent = rankings.schwach.length;
-    document.getElementById('count-unnoetig').textContent = rankings.unnoetig.length;
+    document.getElementById('count-s-tier').textContent = rankings['s-tier'].length;
+    document.getElementById('count-a-tier').textContent = rankings['a-tier'].length;
+    document.getElementById('count-b-tier').textContent = rankings['b-tier'].length;
+    document.getElementById('count-c-tier').textContent = rankings['c-tier'].length;
+    document.getElementById('count-d-tier').textContent = rankings['d-tier'].length;
 }
 
 // Render Rankings
 function renderRankings() {
-    const rankTypes = ['unranked', 'op', 'stark', 'mittel', 'schwach', 'unnoetig'];
+    const rankTypes = ['unranked', 's-tier', 'a-tier', 'b-tier', 'c-tier', 'd-tier'];
     
     rankTypes.forEach(rank => {
         const list = document.getElementById(`list-${rank}`);
