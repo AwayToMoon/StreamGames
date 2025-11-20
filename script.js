@@ -17,7 +17,7 @@ const characters = [
     { id: 14, name: "Light Yagami", series: "Death Note", gender: "boy", emoji: "📓" },
     { id: 15, name: "L Lawliet", series: "Death Note", gender: "boy", emoji: "🍰" },
     { id: 16, name: "Edward Elric", series: "Fullmetal Alchemist", gender: "boy", emoji: "⚙️" },
-    { id: 17, name: "Spike Spiegel", series: "Cowboy Bebop", gender: "boy", emoji: "🚀" },
+    { id: 17, name: "Spike Spiegel", series: "Cowboy BebS Tier", gender: "boy", emoji: "🚀" },
     { id: 18, name: "Killua Zoldyck", series: "Hunter x Hunter", gender: "boy", emoji: "⚡" },
     { id: 19, name: "Gon Freecss", series: "Hunter x Hunter", gender: "boy", emoji: "🎣" },
     { id: 20, name: "Saitama", series: "One Punch Man", gender: "boy", emoji: "👊" },
@@ -98,14 +98,14 @@ const characters = [
     { id: 90, name: "Raphtalia", series: "The Rising of the Shield Hero", gender: "girl", emoji: "🦝" },
 ];
 
-// Rankings: unranked, op, stark, mittel, schwach, unnoetig
+// Rankings: unranked, S Tier, A Tier, B Tier, C Tier, D Tier
 let rankings = {
     'unranked': [],
-    'op': [],
-    'stark': [],
-    'mittel': [],
-    'schwach': [],
-    'unnoetig': []
+    'S Tier': [],
+    'A Tier': [],
+    'B Tier': [],
+    'C Tier': [],
+    'D Tier': []
 };
 
 let isDragging = false;
@@ -123,24 +123,24 @@ function loadRankings() {
         // Migrate old data or reset
         if (saved) {
             const oldRankings = JSON.parse(saved);
-            // Migrate from sehr-schwach to unnoetig
+            // Migrate from sehr-C Tier to D Tier
             rankings = {
                 'unranked': oldRankings.unranked || [],
-                'op': oldRankings.op || [],
-                'stark': oldRankings.stark || [],
-                'mittel': oldRankings.mittel || [],
-                'schwach': oldRankings.schwach || [],
-                'unnoetig': oldRankings['sehr-schwach'] || []
+                'S Tier': oldRankings.S Tier || [],
+                'A Tier': oldRankings.A Tier || [],
+                'B Tier': oldRankings.B Tier || [],
+                'C Tier': oldRankings.C Tier || [],
+                'D Tier': oldRankings['sehr-C Tier'] || []
             };
         } else {
             // Reset all characters to unranked (first load)
             rankings = {
                 'unranked': characters.map(c => c.id),
-                'op': [],
-                'stark': [],
-                'mittel': [],
-                'schwach': [],
-                'unnoetig': []
+                'S Tier': [],
+                'A Tier': [],
+                'B Tier': [],
+                'C Tier': [],
+                'D Tier': []
             };
         }
         localStorage.setItem('anime-rankings-version', '2.1');
@@ -151,23 +151,23 @@ function loadRankings() {
         if (!rankings.unranked) {
             rankings.unranked = [];
         }
-        // Ensure unnoetig exists (migration)
-        if (!rankings.unnoetig && rankings['sehr-schwach']) {
-            rankings.unnoetig = rankings['sehr-schwach'];
-            delete rankings['sehr-schwach'];
+        // Ensure D Tier exists (migration)
+        if (!rankings.D Tier && rankings['sehr-C Tier']) {
+            rankings.D Tier = rankings['sehr-C Tier'];
+            delete rankings['sehr-C Tier'];
         }
-        if (!rankings.unnoetig) {
-            rankings.unnoetig = [];
+        if (!rankings.D Tier) {
+            rankings.D Tier = [];
         }
         
         // Ensure all characters are in a category (add missing ones to unranked)
         const allRankedIds = [
             ...rankings.unranked,
-            ...rankings.op,
-            ...rankings.stark,
-            ...rankings.mittel,
-            ...rankings.schwach,
-            ...rankings.unnoetig
+            ...rankings.S Tier,
+            ...rankings.A Tier,
+            ...rankings.B Tier,
+            ...rankings.C Tier,
+            ...rankings.D Tier
         ];
         
         const allCharacterIds = characters.map(c => c.id);
@@ -191,16 +191,16 @@ function saveRankings() {
 // Update count badges
 function updateCounts() {
     document.getElementById('count-unranked').textContent = rankings.unranked.length;
-    document.getElementById('count-op').textContent = rankings.op.length;
-    document.getElementById('count-stark').textContent = rankings.stark.length;
-    document.getElementById('count-mittel').textContent = rankings.mittel.length;
-    document.getElementById('count-schwach').textContent = rankings.schwach.length;
-    document.getElementById('count-unnoetig').textContent = rankings.unnoetig.length;
+    document.getElementById('count-S Tier').textContent = rankings.S Tier.length;
+    document.getElementById('count-A Tier').textContent = rankings.A Tier.length;
+    document.getElementById('count-B Tier').textContent = rankings.B Tier.length;
+    document.getElementById('count-C Tier').textContent = rankings.C Tier.length;
+    document.getElementById('count-D Tier').textContent = rankings.D Tier.length;
 }
 
 // Render Rankings
 function renderRankings() {
-    const rankTypes = ['unranked', 'op', 'stark', 'mittel', 'schwach', 'unnoetig'];
+    const rankTypes = ['unranked', 'S Tier', 'A Tier', 'B Tier', 'C Tier', 'D Tier'];
     
     rankTypes.forEach(rank => {
         const list = document.getElementById(`list-${rank}`);
@@ -220,10 +220,10 @@ function renderRankings() {
     updateCounts();
 }
 
-// Open Google image search for character
+// S Tieren Google image search for character
 function searchCharacter(char) {
     const searchQuery = encodeURIComponent(`${char.name} ${char.series} anime`);
-    window.open(`https://www.google.com/search?tbm=isch&q=${searchQuery}`, '_blank');
+    window.S Tieren(`https://www.google.com/search?tbm=isch&q=${searchQuery}`, '_blank');
 }
 
 // Create ranking card
@@ -259,8 +259,8 @@ function createRankingCard(char, rank) {
     return card;
 }
 
-// Drag and Drop Functions
-function allowDrop(ev) {
+// Drag and DrS Tier Functions
+function allowDrS Tier(ev) {
     ev.preventDefault();
     ev.currentTarget.classList.add('drag-over');
 }
@@ -282,7 +282,7 @@ function dragEnd(ev) {
     }, 100);
 }
 
-function drop(ev) {
+function drS Tier(ev) {
     ev.preventDefault();
     ev.currentTarget.classList.remove('drag-over');
     
@@ -356,3 +356,4 @@ function init() {
 
 // Initialize on load
 document.addEventListener('DOMContentLoaded', init);
+
