@@ -110,6 +110,17 @@ let rankings = {
 
 let isDragging = false;
 
+// User Management
+let currentUsername = null;
+let userId = null;
+let userHeartbeatInterval = null;
+let usersListener = null;
+
+// Generate unique user ID
+function generateUserId() {
+    return 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+}
+
 // DOM Elements
 const rankingView = document.getElementById('ranking-view');
 
@@ -481,14 +492,209 @@ function drop(ev) {
     renderRankings();
 }
 
+// Setup Username Modal
+function setupUsernameModal() {
+    const usernameModal = document.getElementById('username-modal');
+    const usernameInput = document.getElementById('username-input');
+    const usernameSubmit = document.getElementById('username-submit');
+    
+    // Check if username already exists
+    const savedUsername = localStorage.getItem('anime-username');
+    const savedUserId = localStorage.getItem('anime-userid');
+    
+    if (savedUsername && savedUserId) {
+        currentUsername = savedUsername;
+        userId = savedUserId;
+        usernameModal.classList.remove('active');
+        initializeUser();
+        // Show welcome modal if needed (after username is set)
+        setTimeout(() => {
+            setupWelcomeModal();
+        }, 100);
+        return;
+    }
+    
+    // Show modal if no username
+    usernameModal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+    
+    // Enable submit button when input has text
+    usernameInput.addEventListener('input', (e) => {
+        const value = e.target.value.trim();
+        usernameSubmit.disabled = value.length === 0 || value.length > 20;
+    });
+    
+    // Submit on Enter key
+    usernameInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter' && !usernameSubmit.disabled) {
+            submitUsername();
+        }
+    });
+    
+    // Submit button
+    usernameSubmit.addEventListener('click', submitUsername);
+    
+    function submitUsername() {
+        const username = usernameInput.value.trim();
+        if (username.length === 0 || username.length > 20) return;
+        
+        currentUsername = username;
+        userId = generateUserId();
+        
+        // Save to localStorage
+        localStorage.setItem('anime-username', currentUsername);
+        localStorage.setItem('anime-userid', userId);
+        
+        // Hide modal
+        usernameModal.classList.remove('active');
+        document.body.style.overflow = 'auto';
+        
+        // Initialize user in Firebase
+        initializeUser();
+        
+        // Show welcome modal if needed
+        setTimeout(() => {
+            setupWelcomeModal();
+        }, 100);
+    }
+}
+
+// Initialize user in Firebase
+function initializeUser() {
+    if (typeof db === 'undefined' || !db || !currentUsername || !userId) return;
+    
+    const userRef = db.collection('active-users').doc(userId);
+    
+    // Set initial user data
+    userRef.set({
+        username: currentUsername,
+        lastSeen: firebase.firestore.FieldValue.serverTimestamp(),
+        online: true
+    }).catch(error => {
+        console.error('Error initializing user:', error);
+    });
+    
+    // Start heartbeat
+    startUserHeartbeat();
+    
+    // Listen to active users
+    listenToActiveUsers();
+}
+
+// Heartbeat - update lastSeen every 10 seconds
+function startUserHeartbeat() {
+    if (userHeartbeatInterval) clearInterval(userHeartbeatInterval);
+    
+    userHeartbeatInterval = setInterval(() => {
+        if (typeof db === 'undefined' || !db || !userId) return;
+        
+        const userRef = db.collection('active-users').doc(userId);
+        userRef.update({
+            lastSeen: firebase.firestore.FieldValue.serverTimestamp(),
+            online: true
+        }).catch(error => {
+            console.error('Error updating heartbeat:', error);
+        });
+    }, 10000); // Every 10 seconds
+}
+
+// Listen to active users
+function listenToActiveUsers() {
+    if (typeof db === 'undefined' || !db) return;
+    
+    // Remove old listener if exists
+    if (usersListener) {
+        usersListener();
+    }
+    
+    const usersRef = db.collection('active-users');
+    
+    usersListener = usersRef.onSnapshot((snapshot) => {
+        const now = Date.now();
+        const activeUsers = [];
+        
+        snapshot.forEach((doc) => {
+            const userData = doc.data();
+            const lastSeen = userData.lastSeen?.toMillis?.() || 0;
+            const timeDiff = now - lastSeen;
+            
+            // Consider user online if lastSeen is less than 30 seconds ago
+            if (timeDiff < 30000) {
+                activeUsers.push({
+                    id: doc.id,
+                    username: userData.username,
+                    lastSeen: lastSeen
+                });
+            }
+        });
+        
+        // Sort by lastSeen (most recent first)
+        activeUsers.sort((a, b) => b.lastSeen - a.lastSeen);
+        
+        // Update UI
+        updateUsersList(activeUsers);
+    }, (error) => {
+        console.error('Error listening to users:', error);
+    });
+}
+
+// Update users list UI
+function updateUsersList(users) {
+    const usersList = document.getElementById('users-list');
+    const usersCount = document.getElementById('users-count');
+    
+    if (!usersList || !usersCount) return;
+    
+    usersCount.textContent = users.length;
+    
+    // Clear existing
+    usersList.innerHTML = '';
+    
+    // Add current user first (if in list)
+    const currentUserInList = users.find(u => u.id === userId);
+    const otherUsers = users.filter(u => u.id !== userId);
+    
+    if (currentUserInList) {
+        const badge = createUserBadge(currentUserInList.username, true, true);
+        usersList.appendChild(badge);
+    }
+    
+    // Add other users
+    otherUsers.forEach(user => {
+        const badge = createUserBadge(user.username, false, true);
+        usersList.appendChild(badge);
+    });
+}
+
+// Create user badge element
+function createUserBadge(username, isCurrentUser, isOnline) {
+    const badge = document.createElement('div');
+    badge.className = `user-badge ${isOnline ? 'online' : ''}`;
+    
+    if (isCurrentUser) {
+        badge.innerHTML = `<span>${username}</span> <span style="opacity: 0.6;">(Du)</span>`;
+    } else {
+        badge.textContent = username;
+    }
+    
+    return badge;
+}
+
 // Setup Event Listeners
 function setupEventListeners() {
-    // Welcome modal event listeners
-    setupWelcomeModal();
+    // Welcome modal event listeners (only if username is set)
+    if (currentUsername) {
+        setupWelcomeModal();
+    }
 }
 
 // Welcome Modal Functions
 function setupWelcomeModal() {
+    // Only show if username is set
+    if (!currentUsername) {
+        return;
+    }
+    
     const welcomeModal = document.getElementById('welcome-modal');
     const closeBtn = document.getElementById('close-welcome-modal');
     const understoodBtn = document.getElementById('welcome-understood');
@@ -535,9 +741,37 @@ function init() {
         setTimeout(init, 100);
         return;
     }
+    
+    // Setup username modal first
+    setupUsernameModal();
+    
+    // Load rankings
     loadRankings();
-    setupEventListeners();
+    
+    // Setup other event listeners (welcome modal will be handled by setupUsernameModal)
+    // setupEventListeners() is now called from setupUsernameModal if username exists
 }
+
+// Cleanup on page unload
+window.addEventListener('beforeunload', () => {
+    if (typeof db === 'undefined' || !db || !userId) return;
+    
+    const userRef = db.collection('active-users').doc(userId);
+    userRef.update({
+        online: false,
+        lastSeen: firebase.firestore.FieldValue.serverTimestamp()
+    }).catch(error => {
+        console.error('Error updating user on unload:', error);
+    });
+    
+    if (userHeartbeatInterval) {
+        clearInterval(userHeartbeatInterval);
+    }
+    
+    if (usersListener) {
+        usersListener();
+    }
+});
 
 // Initialize on load
 document.addEventListener('DOMContentLoaded', init);
