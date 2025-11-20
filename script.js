@@ -113,27 +113,88 @@ let isDragging = false;
 // DOM Elements
 const rankingView = document.getElementById('ranking-view');
 
-// Load rankings from localStorage
-function loadRankings() {
-    const saved = localStorage.getItem('anime-rankings');
-    const version = localStorage.getItem('anime-rankings-version');
+// Update connection status
+function updateConnectionStatus(connected, isRealtime = false) {
+    const statusEl = document.getElementById('connection-status');
+    const textEl = document.getElementById('connection-text');
     
-    // Check if we need to migrate old data or if it's first load
-    if (!saved || !version || version !== '3.0') {
-        // Migrate old data or reset
-        if (saved) {
-            const oldRankings = JSON.parse(saved);
-            // Migrate from old system (op/stark/mittel/schwach/unnoetig) to new tier system
+    if (!statusEl || !textEl) return;
+    
+    if (connected) {
+        statusEl.className = 'connection-status connected';
+        textEl.textContent = isRealtime ? '🔴 Live' : 'Verbunden';
+    } else {
+        statusEl.className = 'connection-status disconnected';
+        textEl.textContent = 'Offline';
+    }
+}
+
+// Load rankings from Firebase with real-time updates
+function loadRankings() {
+    // Check if Firebase is available
+    if (typeof db === 'undefined' || !db) {
+        console.warn('Firebase not available, using localStorage fallback');
+        updateConnectionStatus(false);
+        loadRankingsFromLocalStorage();
+        return;
+    }
+    
+    updateConnectionStatus(true, false);
+    const rankingsRef = db.collection('anime-rankings').doc('main');
+    let isFirstLoad = true;
+    
+    // Real-time listener - aktualisiert automatisch bei Änderungen von anderen Benutzern
+    rankingsRef.onSnapshot((doc) => {
+        updateConnectionStatus(true, true);
+        
+        if (doc.exists()) {
+            const data = doc.data();
+            const oldRankings = JSON.parse(JSON.stringify(rankings));
+            
+            // Migrate old data if needed
             rankings = {
-                'unranked': oldRankings.unranked || [],
-                's-tier': oldRankings.op || oldRankings['s-tier'] || [],
-                'a-tier': oldRankings.stark || oldRankings['a-tier'] || [],
-                'b-tier': oldRankings.mittel || oldRankings['b-tier'] || [],
-                'c-tier': oldRankings.schwach || oldRankings['c-tier'] || [],
-                'd-tier': oldRankings.unnoetig || oldRankings['sehr-schwach'] || oldRankings['d-tier'] || []
+                'unranked': data.unranked || [],
+                's-tier': data.op || data['s-tier'] || [],
+                'a-tier': data.stark || data['a-tier'] || [],
+                'b-tier': data.mittel || data['b-tier'] || [],
+                'c-tier': data.schwach || data['c-tier'] || [],
+                'd-tier': data.unnoetig || data['sehr-schwach'] || data['d-tier'] || []
             };
+            
+            // Ensure all tiers exist
+            if (!rankings['s-tier']) rankings['s-tier'] = [];
+            if (!rankings['a-tier']) rankings['a-tier'] = [];
+            if (!rankings['b-tier']) rankings['b-tier'] = [];
+            if (!rankings['c-tier']) rankings['c-tier'] = [];
+            if (!rankings['d-tier']) rankings['d-tier'] = [];
+            
+            // Ensure all characters are in a category (add missing ones to unranked)
+            const allRankedIds = [
+                ...rankings.unranked,
+                ...rankings['s-tier'],
+                ...rankings['a-tier'],
+                ...rankings['b-tier'],
+                ...rankings['c-tier'],
+                ...rankings['d-tier']
+            ];
+            
+            const allCharacterIds = characters.map(c => c.id);
+            const missingIds = allCharacterIds.filter(id => !allRankedIds.includes(id));
+            
+            if (missingIds.length > 0) {
+                rankings.unranked = [...rankings.unranked, ...missingIds];
+                saveRankings();
+            }
+            
+            // Show notification if update came from another user (not first load)
+            if (!isFirstLoad && JSON.stringify(oldRankings) !== JSON.stringify(rankings)) {
+                showUpdateNotification();
+            }
+            
+            isFirstLoad = false;
+            renderRankings();
         } else {
-            // Reset all characters to unranked (first load)
+            // First time - initialize with all characters in unranked
             rankings = {
                 'unranked': characters.map(c => c.id),
                 's-tier': [],
@@ -142,70 +203,92 @@ function loadRankings() {
                 'c-tier': [],
                 'd-tier': []
             };
+            saveRankings();
+            isFirstLoad = false;
         }
+    }, (error) => {
+        console.error('Error loading rankings from Firebase:', error);
+        updateConnectionStatus(false);
+        // Fallback to localStorage if Firebase fails
+        loadRankingsFromLocalStorage();
+    });
+}
+
+// Show notification when rankings are updated by another user
+function showUpdateNotification() {
+    // Create a temporary notification
+    const notification = document.createElement('div');
+    notification.className = 'update-notification';
+    notification.innerHTML = '<i class="fas fa-sync-alt"></i> Rankings wurden aktualisiert!';
+    document.body.appendChild(notification);
+    
+    setTimeout(() => {
+        notification.classList.add('show');
+    }, 100);
+    
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
+}
+
+// Fallback: Load from localStorage if Firebase is not available
+function loadRankingsFromLocalStorage() {
+    const saved = localStorage.getItem('anime-rankings');
+    const version = localStorage.getItem('anime-rankings-version');
+    
+    if (saved && version === '3.0') {
+        rankings = JSON.parse(saved);
+    } else {
+        // Reset all characters to unranked (first load)
+        rankings = {
+            'unranked': characters.map(c => c.id),
+            's-tier': [],
+            'a-tier': [],
+            'b-tier': [],
+            'c-tier': [],
+            'd-tier': []
+        };
         localStorage.setItem('anime-rankings-version', '3.0');
         saveRankings();
-    } else {
-        rankings = JSON.parse(saved);
-        // Ensure unranked exists
-        if (!rankings.unranked) {
-            rankings.unranked = [];
-        }
-        // Migrate old tier names if they exist
-        if (rankings.op && !rankings['s-tier']) {
-            rankings['s-tier'] = rankings.op;
-            delete rankings.op;
-        }
-        if (rankings.stark && !rankings['a-tier']) {
-            rankings['a-tier'] = rankings.stark;
-            delete rankings.stark;
-        }
-        if (rankings.mittel && !rankings['b-tier']) {
-            rankings['b-tier'] = rankings.mittel;
-            delete rankings.mittel;
-        }
-        if (rankings.schwach && !rankings['c-tier']) {
-            rankings['c-tier'] = rankings.schwach;
-            delete rankings.schwach;
-        }
-        if ((rankings.unnoetig || rankings['sehr-schwach']) && !rankings['d-tier']) {
-            rankings['d-tier'] = rankings.unnoetig || rankings['sehr-schwach'] || [];
-            delete rankings.unnoetig;
-            delete rankings['sehr-schwach'];
-        }
-        // Ensure all new tiers exist
-        if (!rankings['s-tier']) rankings['s-tier'] = [];
-        if (!rankings['a-tier']) rankings['a-tier'] = [];
-        if (!rankings['b-tier']) rankings['b-tier'] = [];
-        if (!rankings['c-tier']) rankings['c-tier'] = [];
-        if (!rankings['d-tier']) rankings['d-tier'] = [];
-        
-        // Ensure all characters are in a category (add missing ones to unranked)
-        const allRankedIds = [
-            ...rankings.unranked,
-            ...rankings['s-tier'],
-            ...rankings['a-tier'],
-            ...rankings['b-tier'],
-            ...rankings['c-tier'],
-            ...rankings['d-tier']
-        ];
-        
-        const allCharacterIds = characters.map(c => c.id);
-        const missingIds = allCharacterIds.filter(id => !allRankedIds.includes(id));
-        
-        if (missingIds.length > 0) {
-            rankings.unranked = [...rankings.unranked, ...missingIds];
-            saveRankings();
-        }
     }
+    
+    // Ensure all tiers exist
+    if (!rankings['s-tier']) rankings['s-tier'] = [];
+    if (!rankings['a-tier']) rankings['a-tier'] = [];
+    if (!rankings['b-tier']) rankings['b-tier'] = [];
+    if (!rankings['c-tier']) rankings['c-tier'] = [];
+    if (!rankings['d-tier']) rankings['d-tier'] = [];
     
     renderRankings();
 }
 
-// Save rankings to localStorage
+// Save rankings to Firebase (and localStorage as backup)
 function saveRankings() {
-    localStorage.setItem('anime-rankings', JSON.stringify(rankings));
     updateCounts();
+    
+    // Save to Firebase if available
+    if (typeof db !== 'undefined' && db) {
+        const rankingsRef = db.collection('anime-rankings').doc('main');
+        
+        rankingsRef.set({
+            unranked: rankings.unranked,
+            's-tier': rankings['s-tier'],
+            'a-tier': rankings['a-tier'],
+            'b-tier': rankings['b-tier'],
+            'c-tier': rankings['c-tier'],
+            'd-tier': rankings['d-tier'],
+            lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge: true })
+        .catch((error) => {
+            console.error('Error saving rankings to Firebase:', error);
+            // Fallback to localStorage
+            localStorage.setItem('anime-rankings', JSON.stringify(rankings));
+        });
+    } else {
+        // Fallback to localStorage if Firebase is not available
+        localStorage.setItem('anime-rankings', JSON.stringify(rankings));
+    }
 }
 
 // Update count badges
