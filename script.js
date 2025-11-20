@@ -194,17 +194,93 @@ function loadRankings() {
             isFirstLoad = false;
             renderRankings();
         } else {
-            // First time - initialize with all characters in unranked
-            rankings = {
-                'unranked': characters.map(c => c.id),
-                's-tier': [],
-                'a-tier': [],
-                'b-tier': [],
-                'c-tier': [],
-                'd-tier': []
-            };
-            saveRankings();
-            renderRankings();
+            // Firebase document doesn't exist - check if we have localStorage data to migrate
+            const saved = localStorage.getItem('anime-rankings');
+            const version = localStorage.getItem('anime-rankings-version');
+            
+            if (saved) {
+                // Migrate from localStorage to Firebase (even if version is different)
+                try {
+                    rankings = JSON.parse(saved);
+                    
+                    // Migrate old tier names to new ones if needed
+                    if (rankings.op) {
+                        rankings['s-tier'] = rankings.op;
+                        delete rankings.op;
+                    }
+                    if (rankings.stark) {
+                        rankings['a-tier'] = rankings.stark;
+                        delete rankings.stark;
+                    }
+                    if (rankings.mittel) {
+                        rankings['b-tier'] = rankings.mittel;
+                        delete rankings.mittel;
+                    }
+                    if (rankings.schwach) {
+                        rankings['c-tier'] = rankings.schwach;
+                        delete rankings.schwach;
+                    }
+                    if (rankings.unnoetig || rankings['sehr-schwach']) {
+                        rankings['d-tier'] = rankings.unnoetig || rankings['sehr-schwach'] || [];
+                        delete rankings.unnoetig;
+                        delete rankings['sehr-schwach'];
+                    }
+                    
+                    // Ensure all tiers exist
+                    if (!rankings.unranked) rankings.unranked = [];
+                    if (!rankings['s-tier']) rankings['s-tier'] = [];
+                    if (!rankings['a-tier']) rankings['a-tier'] = [];
+                    if (!rankings['b-tier']) rankings['b-tier'] = [];
+                    if (!rankings['c-tier']) rankings['c-tier'] = [];
+                    if (!rankings['d-tier']) rankings['d-tier'] = [];
+                    
+                    // Ensure all characters are in a category
+                    const allRankedIds = [
+                        ...rankings.unranked,
+                        ...rankings['s-tier'],
+                        ...rankings['a-tier'],
+                        ...rankings['b-tier'],
+                        ...rankings['c-tier'],
+                        ...rankings['d-tier']
+                    ];
+                    
+                    const allCharacterIds = characters.map(c => c.id);
+                    const missingIds = allCharacterIds.filter(id => !allRankedIds.includes(id));
+                    
+                    if (missingIds.length > 0) {
+                        rankings.unranked = [...rankings.unranked, ...missingIds];
+                    }
+                    
+                    // Save migrated data to Firebase
+                    saveRankings();
+                    renderRankings();
+                } catch (e) {
+                    console.error('Error migrating localStorage data:', e);
+                    // If migration fails, start fresh
+                    rankings = {
+                        'unranked': characters.map(c => c.id),
+                        's-tier': [],
+                        'a-tier': [],
+                        'b-tier': [],
+                        'c-tier': [],
+                        'd-tier': []
+                    };
+                    saveRankings();
+                    renderRankings();
+                }
+            } else {
+                // First time - initialize with all characters in unranked
+                rankings = {
+                    'unranked': characters.map(c => c.id),
+                    's-tier': [],
+                    'a-tier': [],
+                    'b-tier': [],
+                    'c-tier': [],
+                    'd-tier': []
+                };
+                saveRankings();
+                renderRankings();
+            }
             isFirstLoad = false;
         }
     }, (error) => {
