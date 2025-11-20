@@ -28,7 +28,10 @@
                 <span class="title-icon">⚡</span>
                 Anime Character Ranking
             </h1>
-            <p class="subtitle">Ranke Charaktere von OP bis Sehr Schwach</p>
+            <p class="subtitle">Ranke Charaktere von OP bis Unnötig</p>
+            <p class="footer-text">
+                Made with <span class="heart">❤️</span> by <span class="author">Away2moon</span>
+            </p>
         </header>
 
         <!-- Ranking View -->
@@ -74,27 +77,74 @@
                     <div class="ranking-list" id="list-schwach" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
                 </div>
 
-                <div class="ranking-column" data-rank="sehr-schwach">
-                    <div class="ranking-header sehr-schwach">
-                        <h2><i class="fas fa-times-circle"></i> Sehr Schwach</h2>
-                        <span class="count" id="count-sehr-schwach">0</span>
+                <div class="ranking-column" data-rank="unnoetig">
+                    <div class="ranking-header unnoetig">
+                        <h2><i class="fas fa-times-circle"></i> Unnötig</h2>
+                        <span class="count" id="count-unnoetig">0</span>
                     </div>
-                    <div class="ranking-list" id="list-sehr-schwach" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+                    <div class="ranking-list" id="list-unnoetig" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
                 </div>
             </div>
         </div>
 
     </div>
 
-    <!-- Image Search Modal -->
-    <div id="image-search-modal" class="image-modal">
-        <div class="image-modal-content">
-            <div class="image-modal-header">
-                <h2 id="modal-character-name">Charakter Bilder</h2>
-                <button class="image-modal-close" id="close-image-modal">&times;</button>
+    <!-- Welcome Modal -->
+    <div id="welcome-modal" class="welcome-modal">
+        <div class="welcome-modal-content">
+            <div class="welcome-modal-header">
+                <h2><i class="fas fa-star"></i> Willkommen!</h2>
+                <button class="welcome-modal-close" id="close-welcome-modal">&times;</button>
             </div>
-            <div class="image-modal-body">
-                <iframe id="google-image-iframe" src="" frameborder="0"></iframe>
+            <div class="welcome-modal-body">
+                <div class="welcome-section">
+                    <h3><i class="fas fa-trophy"></i> Wie funktioniert's?</h3>
+                    <p>Ranke deine Lieblings-Anime-Charaktere von <strong>OP</strong> bis <strong>Unnötig</strong>!</p>
+                </div>
+                
+                <div class="welcome-features">
+                    <div class="welcome-feature">
+                        <div class="feature-icon">🖱️</div>
+                        <div class="feature-text">
+                            <h4>Drag & Drop</h4>
+                            <p>Ziehe Charaktere per Drag & Drop zwischen den Kategorien</p>
+                        </div>
+                    </div>
+                    
+                    <div class="welcome-feature">
+                        <div class="feature-icon">🖼️</div>
+                        <div class="feature-text">
+                            <h4>Bilder suchen</h4>
+                            <p>Klicke auf einen Charakter, um nach Bildern zu suchen</p>
+                        </div>
+                    </div>
+                    
+                    <div class="welcome-feature">
+                        <div class="feature-icon">💾</div>
+                        <div class="feature-text">
+                            <h4>Automatisch gespeichert</h4>
+                            <p>Deine Rankings werden automatisch gespeichert</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="welcome-ranks">
+                    <h4>Ranking-Kategorien:</h4>
+                    <div class="ranks-list">
+                        <span class="rank-badge op">👑 OP</span>
+                        <span class="rank-badge stark">🔥 Stark</span>
+                        <span class="rank-badge mittel">⚖️ Mittel</span>
+                        <span class="rank-badge schwach">⚠️ Schwach</span>
+                        <span class="rank-badge unnoetig">❌ Unnötig</span>
+                    </div>
+                </div>
+            </div>
+            <div class="welcome-modal-footer">
+                <label class="dont-show-again">
+                    <input type="checkbox" id="dont-show-again">
+                    <span>Nicht mehr anzeigen</span>
+                </label>
+                <button class="welcome-btn" id="welcome-understood">Verstanden!</button>
             </div>
         </div>
     </div>
