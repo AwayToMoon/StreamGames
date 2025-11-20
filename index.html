@@ -8,6 +8,9 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -29,6 +32,10 @@
                 Anime Character Ranking
             </h1>
             <p class="subtitle">Ranke Charaktere von S Tier bis D Tier</p>
+            <div class="connection-status" id="connection-status">
+                <i class="fas fa-circle"></i>
+                <span id="connection-text">Verbinde...</span>
+            </div>
             <p class="footer-text">
                 Made with <span class="heart">❤️</span> by <span class="author">Away2moon</span>
             </p>
@@ -149,6 +156,21 @@
         </div>
     </div>
 
+    <script>
+        // Firebase Configuration
+        const encryptedConfig = "U2FsdGVkX1/2h2jz/okQRoolhPVQPafedlkbIfYoDr/bEIj6Qe4Gz4D+GJsaaQ5i7XVMwWJ+cqe94PGWRSvfQKwZHwpHdIr9YhzTEVGwzq0yCkU/7ZsA1fNW0THeJjRP5W+tborqv2W5F8pHhVoVtYy104eDojx6YeaaKd4zyAr36a1eAY82nlgIUMhzbl8s7LEWqoqk/w+4brkq8Gt7zZ2zkCij2mwXb8LEyZJBFSa0j62QdI8cKkSwBRw3MxO56KTu4tLFcbv7hhehDtKwM0PNJMkuDp+xldtmmvIOS56fR64kvsLXlkN/DSV+3MHLWFCHv/ry06NtgMy6aEz3mfFQUqP0uaTR+ohi3niWSNYJ+wMNgQsV6xiXj+VmKleN";
+        
+        function initFirebase() {
+            const secretKey = "HigherCellF-Games-2024";
+            const decrypted = CryptoJS.AES.decrypt(encryptedConfig, secretKey).toString(CryptoJS.enc.Utf8);
+            const firebaseConfig = JSON.parse(decrypted);
+            
+            firebase.initializeApp(firebaseConfig);
+            window.db = firebase.firestore();
+        }
+
+        initFirebase();
+    </script>
     <script src="script.js"></script>
 </body>
 </html>
